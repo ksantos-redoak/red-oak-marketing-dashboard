@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Red Oak — Marketing Attribution Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --red:#A2212E; --red-dark:#7d1923; --black:#404246; --gray:#ABA9A9;
+    --gray-light:#E8E7E7; --gray-bg:#F5F4F3; --white:#fff;
+    --ink:#2a2b2e; --good:#2e7d52; --warn:#b8860b; --thin:#dedcdc;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Roboto',sans-serif;background:var(--gray-bg);color:var(--ink);
+    -webkit-font-smoothing:antialiased;line-height:1.45}
+  .mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+
+  /* ---- top bar ---- */
+  header{background:var(--black);color:#fff;padding:0 28px;height:56px;
+    display:flex;align-items:center;justify-content:space-between;
+    position:sticky;top:0;z-index:50;box-shadow:0 1px 0 rgba(0,0,0,.2)}
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand .logo{width:30px;height:30px;border-radius:5px;background:var(--red);
+    display:flex;align-items:center;justify-content:center;font-weight:900;
+    font-size:17px;color:#fff;letter-spacing:-1px}
+  .brand h1{font-size:14px;font-weight:500;letter-spacing:.2px}
+  .brand h1 span{color:var(--gray);font-weight:400}
+  .asof{font-size:11.5px;color:var(--gray);font-weight:400}
+  .asof b{color:#fff;font-weight:500}
+
+  /* ---- period rail ---- */
+  .rail{background:#fff;border-bottom:1px solid var(--thin);padding:0 28px;
+    display:flex;gap:2px;height:42px;align-items:stretch;overflow-x:auto}
+  .rail button{border:0;background:none;font-family:inherit;font-size:12px;
+    color:var(--gray);padding:0 14px;cursor:pointer;font-weight:500;
+    border-bottom:2px solid transparent;white-space:nowrap}
+  .rail button.active{color:var(--red);border-bottom-color:var(--red)}
+  .rail .sep{width:1px;background:var(--thin);margin:8px 6px}
+
+  main{max-width:1380px;margin:0 auto;padding:26px 28px 60px}
+
+  /* ---- title block ---- */
+  .pagehead{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;flex-wrap:wrap;gap:16px}
+  .pagehead h2{font-size:23px;font-weight:700;color:var(--black);letter-spacing:-.3px}
+  .pagehead .sub{font-size:12.5px;color:var(--gray);margin-top:3px}
+  .stamp{display:flex;gap:10px}
+  .stamp .box{background:#fff;border:1px solid var(--thin);border-radius:8px;
+    padding:8px 14px;text-align:center;min-width:84px}
+  .stamp .box .k{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--gray);font-weight:500}
+  .stamp .box .v{font-size:18px;font-weight:700;color:var(--black);margin-top:2px}
+
+  /* ---- KPI tiles ---- */
+  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:26px}
+  .kpi{background:#fff;border:1px solid var(--thin);border-radius:10px;padding:15px 16px;
+    position:relative;overflow:hidden}
+  .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red)}
+  .kpi .lab{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--gray);font-weight:700}
+  .kpi .val{font-size:26px;font-weight:700;color:var(--black);margin-top:8px;letter-spacing:-.5px}
+  .kpi .note{font-size:11px;color:var(--ink);margin-top:5px;opacity:.7}
+  .kpi.muted::before{background:var(--gray)}
+
+  /* ---- section ---- */
+  section{margin-bottom:30px}
+  .sec-h{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+  .sec-h .tick{width:4px;height:18px;background:var(--red);border-radius:2px}
+  .sec-h h3{font-size:14px;font-weight:700;color:var(--black);text-transform:uppercase;letter-spacing:.8px}
+  .sec-h .pill{font-size:10.5px;background:var(--gray-light);color:var(--black);
+    padding:3px 9px;border-radius:20px;font-weight:600}
+  .sec-h .src{margin-left:auto;font-size:11px;color:var(--gray);font-weight:500}
+
+  /* ---- data table ---- */
+  .card{background:#fff;border:1px solid var(--thin);border-radius:10px;overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  thead th{background:var(--gray-bg);text-align:right;padding:10px 14px;font-weight:700;
+    font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);
+    border-bottom:1px solid var(--thin)}
+  thead th:first-child{text-align:left}
+  tbody td{padding:10px 14px;text-align:right;border-bottom:1px solid #f0efef}
+  tbody td:first-child{text-align:left;font-weight:500;color:var(--black)}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr.total td{background:#faf6f6;font-weight:700;color:var(--black);
+    border-top:2px solid var(--red)}
+  tbody tr:hover td{background:#fafafa}
+  tbody tr.total:hover td{background:#faf6f6}
+  .pos{color:var(--good);font-weight:600}
+
+  /* ---- chart grids ---- */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .chart-card{background:#fff;border:1px solid var(--thin);border-radius:10px;padding:16px 16px 10px}
+  .chart-card h4{font-size:12.5px;font-weight:700;color:var(--black);margin-bottom:2px}
+  .chart-card .ch-sub{font-size:10.5px;color:var(--gray);margin-bottom:12px}
+  .chart-wrap{position:relative;height:230px}
+  .chart-wrap.tall{height:300px}
+
+  /* ---- caveat ---- */
+  .caveat{display:flex;gap:11px;background:#fbf6ec;border:1px solid #ecd9a8;
+    border-left:3px solid var(--warn);border-radius:8px;padding:11px 15px;margin-bottom:14px}
+  .caveat .ic{color:var(--warn);font-weight:900;font-size:14px;flex-shrink:0;margin-top:1px}
+  .caveat p{font-size:11.8px;color:#6b5d33;line-height:1.5}
+  .caveat b{color:#5a4d29}
+
+  .legend-note{font-size:11px;color:var(--gray);margin-top:10px;padding-left:2px}
+
+  footer{text-align:center;font-size:11px;color:var(--gray);padding:26px 0 10px;
+    border-top:1px solid var(--thin);margin-top:10px}
+  footer b{color:var(--black)}
+
+  @media(max-width:1100px){
+    .kpis{grid-template-columns:repeat(3,1fr)}
+    .grid3{grid-template-columns:1fr}
+    .grid2{grid-template-columns:1fr}
+  }
+  @media(max-width:640px){
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    main{padding:18px 14px 50px}
+    header{padding:0 14px}
+    .rail{padding:0 14px}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo">R</div>
+    <h1>Marketing Attribution <span>· GTM Performance</span></h1>
+  </div>
+  <div class="asof">Live snapshot · <b>YTD 2026</b> · as of <b>Jun 16, 2026</b></div>
+</header>
+
+<nav class="rail" id="periodRail">
+  <button class="active" data-period="YTD">YTD</button>
+  <span class="sep"></span>
+  <button data-period="0">JAN</button><button data-period="1">FEB</button><button data-period="2">MAR</button>
+  <button data-period="3">APR</button><button data-period="4">MAY</button><button data-period="5">JUN</button>
+  <span class="sep"></span>
+  <button data-period="Q1">Q1</button><button data-period="Q2">Q2</button>
+</nav>
+
+<main>
+  <div class="pagehead">
+    <div>
+      <h2 id="periodTitle">Year-to-Date 2026</h2>
+      <div class="sub" id="periodSub">New-business pipeline (renewals excluded) · HubSpot + Salesforce · Jan 1 – Jun 16</div>
+    </div>
+    <div class="stamp">
+      <div class="box"><div class="k">Months</div><div class="v">5.5</div></div>
+      <div class="box"><div class="k">Jun</div><div class="v">Partial</div></div>
+    </div>
+  </div>
+
+  <!-- KPI TILES -->
+  <div class="kpis">
+    <div class="kpi"><div class="lab">MQLs</div><div class="val" id="kMql">433</div><div class="note" id="kMqlN">marketing qualified, YTD</div></div>
+    <div class="kpi"><div class="lab">Demo Requests</div><div class="val" id="kDemo">126</div><div class="note">first-touch demo conversions</div></div>
+    <div class="kpi"><div class="lab">Open Pipeline</div><div class="val" id="kOpen">$8.94M</div><div class="note" id="kOpenN">133 new-biz opps open</div></div>
+    <div class="kpi"><div class="lab">Closed-Won</div><div class="val" id="kWon">$1.30M</div><div class="note" id="kWonN">47 deals won</div></div>
+    <div class="kpi"><div class="lab">Avg Won Deal</div><div class="val" id="kAvg">$27.8K</div><div class="note">new-business mean</div></div>
+    <div class="kpi muted"><div class="lab">Win Rate</div><div class="val" id="kWin">51.6%</div><div class="note">of closed new-biz opps</div></div>
+  </div>
+
+  <!-- MARKETING LEADS TABLE -->
+  <section>
+    <div class="sec-h">
+      <span class="tick"></span><h3>Marketing Generated Leads</h3><span class="pill">4 metrics</span>
+      <span class="src">Source: HubSpot · portal 43721852</span>
+    </div>
+    <div class="card">
+      <table id="leadsTable">
+        <thead><tr><th>Metric</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun*</th><th>YTD Total</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="legend-note">* June is a partial month (through Jun 16). MQL counts use the lifecycle-stage entry date, capturing every contact that became an MQL — not just those still sitting in the stage today.</div>
+  </section>
+
+  <!-- REVENUE / PIPELINE TABLE -->
+  <section>
+    <div class="sec-h">
+      <span class="tick"></span><h3>Pipeline &amp; Revenue Impact</h3><span class="pill">5 metrics</span>
+      <span class="src">Source: Salesforce (via Snowflake mirror)</span>
+    </div>
+    <div class="card">
+      <table id="revTable">
+        <thead><tr><th>Metric</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun*</th><th>YTD Total</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="legend-note">New-business opportunities only — renewals, annual ADV updates, and registration/licensing record types excluded per the renewal-exclusion rule. Pipeline value is opportunity Amount.</div>
+  </section>
+
+  <!-- MQL SOURCE + DEMO TREND -->
+  <section>
+    <div class="sec-h"><span class="tick"></span><h3>Where Leads Come From</h3><span class="src">Source: HubSpot Original Traffic Source</span></div>
+    <div class="grid2">
+      <div class="chart-card">
+        <h4>MQLs by Original Traffic Source <span style="font-size:9.5px;font-weight:600;color:var(--red);background:#f0e6e7;padding:2px 7px;border-radius:20px;vertical-align:middle;margin-left:4px">YTD ONLY</span></h4>
+        <div class="ch-sub">433 MQLs YTD · attribution at contact level</div>
+        <div class="chart-wrap"><canvas id="mqlSource"></canvas></div>
+        <div class="legend-note">Offline Sources (209) + Direct Traffic (120) = 76% of MQLs sit in the two least-attributable buckets — a contact-source hygiene gap worth an AE/import-process follow-up.</div>
+      </div>
+      <div class="chart-card">
+        <h4>MQLs &amp; Demo Requests by Month</h4>
+        <div class="ch-sub">demand pacing across YTD</div>
+        <div class="chart-wrap"><canvas id="demandTrend"></canvas></div>
+        <div class="legend-note">Feb MQL spike (178) aligns with the Feb AI Growth Webinar. Demo requests have trended down month-over-month since January.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVENUE BY SOURCE -->
+  <section>
+    <div class="sec-h"><span class="tick"></span><h3>Revenue &amp; Pipeline by Source</h3><span class="src">Salesforce opps × contact original source</span></div>
+    <div class="caveat">
+      <span class="ic">!</span>
+      <p><b>Attribution coverage caveat.</b> Source is traced from the opportunity's primary contact's HubSpot Original Traffic Source, <b>falling back to any associated contact</b> when the primary has none. This resolves <b>91%</b> of new-business opps (21 of 224 remain unsourceable: 16 have a contact role but no source on the contact, 5 have no contact role at all). The opportunity-level source fields in Salesforce are only ~8% populated and are <b>not</b> used here. Treat the "no source" bucket as unattributed, not as zero-influence.</p>
+    </div>
+    <div class="grid2">
+      <div class="chart-card">
+        <h4>Open Pipeline by Source</h4>
+        <div class="ch-sub" id="openSub">$8.94M new-business open pipeline</div>
+        <div class="chart-wrap"><canvas id="openBySource"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h4>Closed-Won Revenue by Source</h4>
+        <div class="ch-sub" id="wonSub">$1.30M won YTD</div>
+        <div class="chart-wrap"><canvas id="wonBySource"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAMPAIGN INFLUENCE -->
+  <section>
+    <div class="sec-h"><span class="tick"></span><h3>Campaign Influence on Pipeline</h3><span class="pill">top 12</span><span class="src">Salesforce campaign members → opp contact roles</span></div>
+    <div class="caveat">
+      <span class="ic">!</span>
+      <p><b>Contact-role coverage caveat.</b> Influence links opportunities to campaigns through opportunity contact roles, which exist on only <b>24%</b> of YTD opps (278 of 1,159 total; the build guide flags ~2,901 deals with zero contacts org-wide). This is a <b>"touched-any-influencing-campaign"</b> view, so an opp can be credited to multiple campaigns and the bars do not sum to total pipeline. Real influence is almost certainly <b>understated</b> until contact roles are enforced.</p>
+    </div>
+    <div class="chart-card">
+      <h4>Influenced Open Pipeline by Campaign <span style="font-size:9.5px;font-weight:600;color:var(--red);background:#f0e6e7;padding:2px 7px;border-radius:20px;vertical-align:middle;margin-left:4px">YTD ONLY</span></h4>
+      <div class="ch-sub">new-business open pipeline touched by campaign members · discrete campaigns only (catch-all buckets, call lists &amp; conversion holders excluded)</div>
+      <div class="chart-wrap tall"><canvas id="campInfl"></canvas></div>
+    </div>
+  </section>
+
+  <footer>
+    <b>Red Oak Compliance</b> · Marketing Attribution Dashboard · point-in-time snapshot, Jun 16 2026<br>
+    Data: HubSpot (MQLs, sources, demos) + Salesforce via Snowflake BRONZE.SALESFORCE (pipeline, revenue, campaign influence). Regenerate to refresh. © 2026 Red Oak Compliance
+  </footer>
+</main>
+
+<script>
+const BRAND={red:'#A2212E',redSoft:'#c25460',black:'#404246',gray:'#ABA9A9',
+  grayLight:'#E8E7E7',good:'#2e7d52',blue:'#5b7a9a',gold:'#c79a3a'};
+const fmtUSD=v=>v>=1e6?'$'+(v/1e6).toFixed(2)+'M':v>=1e3?'$'+(v/1e3).toFixed(0)+'K':'$'+Math.round(v);
+const fmtNum=v=>Math.round(v).toLocaleString();
+
+/* ===== MONTHLY DATA (real, HubSpot + Snowflake BRONZE.SALESFORCE) ===== */
+const months=['Jan','Feb','Mar','Apr','May','Jun*'];
+const monthFull=['January','February','March','April','May','June (partial)'];
+
+// HubSpot — MQLs by lifecycle-entry date; demos by first-conversion date
+const mqlByMonth =[84,178,91,27,16,37];
+const demoByMonth=[36,33,19,14,13,11];
+
+// Salesforce (via Snowflake) — new-business opps only (renewals excluded)
+const oppsCreated=[38,42,36,33,49,26];
+const wonCount   =[10,9,6,8,12,2];
+const wonAmt     =[842135.61,115827,62032,202218.75,78498.80,4000];
+const openCount  =[12,21,22,18,36,24];
+const openAmt    =[444200.50,1755032,2253000,1659057.20,2446673.20,379232];
+
+// Revenue/pipeline by source, per month [won, open]; keyed by source
+const SOURCES=['Offline Sources','Email Marketing','Paid Search','Organic Search','Direct Traffic','Referrals','no source / no role'];
+const sourceByMonth={ // index 0..5 = Jan..Jun
+ 'Offline Sources':   [[717175.61,444200.50],[82827,1163953],[60782,1789506.20],[105305,568795],[64238.80,1412354.70],[4000,344482]],
+ 'Email Marketing':   [[0,0],[0,83399],[0,0],[0,882450],[0,0],[0,0]],
+ 'Paid Search':       [[88600,0],[0,426300],[0,220228.80],[0,0],[0,345350],[0,0]],
+ 'Organic Search':    [[10000,0],[13000,0],[0,91974],[59653.75,0],[0,276503.50],[0,9500]],
+ 'Direct Traffic':    [[0,0],[20000,19160],[1250,116536],[13800,156112.20],[0,85121],[0,25250]],
+ 'Referrals':         [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]],
+ 'no source / no role':[[26360,0],[0,62220],[0,34755],[23460,51700],[14260,327344],[0,0]]
+};
+
+// YTD-only panels (do not split reliably by month)
+const mqlSource=[['Offline Sources',209],['Direct Traffic',120],['Other Campaigns',30],
+  ['Email Marketing',27],['Organic Search',23],['Paid Search',11],['Referrals',8],
+  ['Organic Social',4],['Paid Social',1]];
+const campInfl=[
+  ['AI in Compliance Webinar','Webinar',3948647.80,695754],
+  ['SMC Article','Gated Asset',3473434.60,267844],
+  ['RSL Article','Gated Asset',3367984.80,267844],
+  ['2026 Feb AI Growth Webinar','Webinar',3238125.00,637412],
+  ['2026 Apr Red Oak Accelerate','Seminar/Conf',3050298.30,597922],
+  ['Operation Christmas Lifecycle','Lifecycle',2022664.00,525842],
+  ['SIFMA 2026','Seminar/Conf',1392416.00,0],
+  ['2026 AI Compliance Webinar','Webinar',1292711.00,114070],
+  ['2026 Client Webinar','Webinar',927964.80,48470],
+  ['2025 Red Oak User Conference','Seminar/Conf',768466.80,14250],
+  ['Red Oak Connect Live (Q2)','Webinar',595090.00,25470],
+  ['FINRA 2026 Conference (Q2)','Seminar/Conf',468645.00,107081.61]];
+
+/* ===== PERIOD ENGINE ===== */
+// returns array of month indices for a period key
+function monthsFor(p){
+  if(p==='YTD') return [0,1,2,3,4,5];
+  if(p==='Q1')  return [0,1,2];
+  if(p==='Q2')  return [3,4,5];
+  return [parseInt(p,10)];
+}
+const sum=a=>a.reduce((x,y)=>x+y,0);
+const pick=(arr,idx)=>idx.map(i=>arr[i]);
+
+function periodLabel(p){
+  if(p==='YTD') return ['Year-to-Date 2026','New-business pipeline (renewals excluded) · HubSpot + Salesforce · Jan 1 – Jun 16'];
+  if(p==='Q1')  return ['Q1 2026','Jan–Mar · new-business pipeline (renewals excluded)'];
+  if(p==='Q2')  return ['Q2 2026','Apr–Jun · Jun partial through the 16th'];
+  const i=parseInt(p,10);
+  return [monthFull[i]+' 2026', (i===5?'Partial month, through Jun 16 · ':'')+'new-business pipeline (renewals excluded)'];
+}
+
+/* ===== RENDERERS ===== */
+let charts={};
+const noGrid={grid:{display:false},ticks:{color:BRAND.gray}};
+const yMoney={grid:{color:'#f0efef'},ticks:{color:BRAND.gray,callback:v=>fmtUSD(v)}};
+
+function rowHTML(label,arr,fmt,cls){
+  const cells=arr.map(v=>'<td class="mono">'+fmt(v)+'</td>').join('');
+  return '<tr'+(cls?' class="'+cls+'"':'')+'><td>'+label+'</td>'+cells+'<td class="mono">'+fmt(sum(arr))+'</td></tr>';
+}
+// build table headers dynamically for the active months
+function headHTML(idx){
+  const cols=idx.map(i=>'<th>'+months[i].replace('*','*')+'</th>').join('');
+  return '<tr><th>Metric</th>'+cols+'<th>'+(idx.length>1?'Total':'Value')+'</th></tr>';
+}
+
+function render(p){
+  const idx=monthsFor(p);
+  // ----- title -----
+  const [t,s]=periodLabel(p);
+  document.getElementById('periodTitle').textContent=t;
+  document.getElementById('periodSub').textContent=s;
+
+  // ----- KPIs -----
+  const mqlT=sum(pick(mqlByMonth,idx)), demoT=sum(pick(demoByMonth,idx));
+  const wonCT=sum(pick(wonCount,idx)),  wonAT=sum(pick(wonAmt,idx));
+  const openCT=sum(pick(openCount,idx)),openAT=sum(pick(openAmt,idx));
+  // win rate uses closed = won + lost; lost approximated as created - open - won within period
+  const lostCT=Math.max(0, sum(pick(oppsCreated,idx)) - openCT - wonCT);
+  const closed=wonCT+lostCT;
+  document.getElementById('kMql').textContent=fmtNum(mqlT);
+  document.getElementById('kMqlN').textContent='marketing qualified, '+(p==='YTD'?'YTD':t.split(' ')[0]);
+  document.getElementById('kDemo').textContent=fmtNum(demoT);
+  document.getElementById('kOpen').textContent=fmtUSD(openAT);
+  document.getElementById('kOpenN').textContent=openCT+' new-biz opps open';
+  document.getElementById('kWon').textContent=fmtUSD(wonAT);
+  document.getElementById('kWonN').textContent=wonCT+' deals won';
+  document.getElementById('kAvg').textContent=wonCT?fmtUSD(wonAT/wonCT):'—';
+  document.getElementById('kWin').textContent=closed?(wonCT/closed*100).toFixed(1)+'%':'—';
+
+  // ----- leads table -----
+  document.querySelector('#leadsTable thead').innerHTML=headHTML(idx);
+  document.querySelector('#leadsTable tbody').innerHTML=
+    rowHTML('MQLs',pick(mqlByMonth,idx),fmtNum)+
+    rowHTML('Demo Requests',pick(demoByMonth,idx),fmtNum)+
+    rowHTML('New-Biz Opps Created',pick(oppsCreated,idx),fmtNum,'total');
+
+  // ----- revenue table -----
+  document.querySelector('#revTable thead').innerHTML=headHTML(idx);
+  const wonArr=pick(wonAmt,idx), wcArr=pick(wonCount,idx);
+  const avgArr=wonArr.map((a,i)=>wcArr[i]?a/wcArr[i]:0);
+  document.querySelector('#revTable tbody').innerHTML=
+    rowHTML('Closed-Won ($)',wonArr,fmtUSD)+
+    rowHTML('Deals Won (#)',wcArr,fmtNum)+
+    rowHTML('Open Pipeline ($)',pick(openAmt,idx),fmtUSD)+
+    rowHTML('Open Opps (#)',pick(openCount,idx),fmtNum)+
+    rowHTML('Avg Won Deal',avgArr,v=>v?fmtUSD(v):'—','total');
+
+  // ----- demand trend (period-responsive) -----
+  const trendLabels=idx.map(i=>months[i]);
+  charts.demand.data.labels=trendLabels;
+  charts.demand.data.datasets[0].data=pick(mqlByMonth,idx);
+  charts.demand.data.datasets[1].data=pick(demoByMonth,idx);
+  charts.demand.update();
+
+  // ----- revenue by source (period-responsive) -----
+  const srcAgg=SOURCES.map(src=>{
+    let w=0,o=0; idx.forEach(i=>{w+=sourceByMonth[src][i][0]; o+=sourceByMonth[src][i][1];});
+    return {src,w,o};
+  }).filter(r=>r.w>0||r.o>0)
+    .sort((a,b)=>b.o-a.o);
+  const lab=srcAgg.map(r=>r.src==='no source / no role'?'no source / no role':r.src);
+  charts.open.data.labels=lab;
+  charts.open.data.datasets[0].data=srcAgg.map(r=>r.o);
+  charts.open.data.datasets[0].backgroundColor=srcAgg.map(r=>r.src.includes('no source')?BRAND.gray:BRAND.red);
+  charts.open.update();
+  charts.won.data.labels=lab;
+  charts.won.data.datasets[0].data=srcAgg.map(r=>r.w);
+  charts.won.data.datasets[0].backgroundColor=srcAgg.map(r=>r.src.includes('no source')?BRAND.gray:BRAND.redSoft);
+  charts.won.update();
+
+  // chart card subtitles
+  document.getElementById('openSub').textContent=fmtUSD(openAT)+' new-business open pipeline';
+  document.getElementById('wonSub').textContent=fmtUSD(wonAT)+' won';
+}
+
+/* ===== STATIC CHARTS (YTD only) ===== */
+Chart.defaults.font.family="'Roboto',sans-serif";
+Chart.defaults.font.size=11;
+Chart.defaults.color=BRAND.black;
+
+new Chart(document.getElementById('mqlSource'),{
+  type:'bar',
+  data:{labels:mqlSource.map(d=>d[0]),
+    datasets:[{data:mqlSource.map(d=>d[1]),backgroundColor:mqlSource.map((d,i)=>i<2?BRAND.gray:BRAND.red),borderRadius:3}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+' MQLs'}}},
+    scales:{x:{grid:{color:'#f0efef'},ticks:{color:BRAND.gray}},y:noGrid}}
+});
+new Chart(document.getElementById('campInfl'),{
+  type:'bar',
+  data:{labels:campInfl.map(c=>c[0]),
+    datasets:[
+      {label:'Influenced Open Pipeline',data:campInfl.map(c=>c[2]),backgroundColor:BRAND.red,borderRadius:3},
+      {label:'Influenced Won',data:campInfl.map(c=>c[3]),backgroundColor:BRAND.black,borderRadius:3}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:14}},
+      tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmtUSD(c.parsed.x)}}},
+    scales:{x:yMoney,y:noGrid}}
+});
+
+/* ===== DYNAMIC CHARTS (created once, updated per period) ===== */
+charts.demand=new Chart(document.getElementById('demandTrend'),{
+  data:{labels:months,
+    datasets:[
+      {type:'bar',label:'MQLs',data:mqlByMonth,backgroundColor:BRAND.red,borderRadius:3,order:2},
+      {type:'line',label:'Demo Requests',data:demoByMonth,borderColor:BRAND.black,
+        backgroundColor:BRAND.black,tension:.3,pointRadius:3,borderWidth:2,order:1}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:14}}},
+    scales:{x:noGrid,y:{grid:{color:'#f0efef'},ticks:{color:BRAND.gray}}}}
+});
+charts.open=new Chart(document.getElementById('openBySource'),{
+  type:'bar',data:{labels:[],datasets:[{data:[],borderRadius:3}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtUSD(c.parsed.x)}}},
+    scales:{x:yMoney,y:noGrid}}
+});
+charts.won=new Chart(document.getElementById('wonBySource'),{
+  type:'bar',data:{labels:[],datasets:[{data:[],borderRadius:3}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtUSD(c.parsed.x)}}},
+    scales:{x:yMoney,y:noGrid}}
+});
+
+/* ===== TAB WIRING ===== */
+document.getElementById('periodRail').addEventListener('click',e=>{
+  const btn=e.target.closest('button[data-period]');
+  if(!btn) return;
+  document.querySelectorAll('#periodRail button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render(btn.dataset.period);
+});
+
+render('YTD');
+</script>
+</body>
+</html>
