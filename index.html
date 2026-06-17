@@ -234,6 +234,29 @@
     </div>
   </section>
 
+  <!-- INSIDE THE OFFLINE BUCKET -->
+  <section>
+    <div class="sec-h"><span class="tick"></span><h3>Inside the Offline Bucket</h3><span class="pill" style="background:#f0e6e7;color:var(--red)">YTD only</span><span class="src">Sourced By · Import Source Category / Detail</span></div>
+    <div class="caveat">
+      <span class="ic">!</span>
+      <p><b>Offline ≠ unknowable.</b> The Offline bucket (the largest source on both MQLs and pipeline) decomposes once you read <b>Sourced By</b> and <b>Import Source Category/Detail</b>. Coverage differs by view: <b>~44% of Offline contacts</b> carry an import category, but only a minority of Offline <b>opportunities</b> do — so the contact-count breakdown below is solid, while the revenue breakdown still has a large uncategorized share. Where <b>Sourced By</b> is set, Offline is <b>~99% "Marketing - Outbound"</b> — i.e. marketing-driven list and event imports, not a true unknown.</p>
+    </div>
+    <div class="grid2">
+      <div class="chart-card">
+        <h4>Offline Contacts by Import Category</h4>
+        <div class="ch-sub">48,607 Offline contacts · 44% categorized</div>
+        <div class="chart-wrap"><canvas id="offlineContacts"></canvas></div>
+        <div class="legend-note">Top named sources: ABM "ICP - ADV Yes to 5L" (3,921), 6Sense Top 25 (1,955), 4U user/client imports, and conferences (SIFMA, FINRA, NSCP).</div>
+      </div>
+      <div class="chart-card">
+        <h4>Offline New-Biz Pipeline by Import Category</h4>
+        <div class="ch-sub">open pipeline from Offline-sourced opps</div>
+        <div class="chart-wrap"><canvas id="offlinePipe"></canvas></div>
+        <div class="legend-note">Most Offline <b>revenue</b> is still uncategorized — the contacts on those deals lack import fields. Populating Import Source on deal-associated contacts would close this gap.</div>
+      </div>
+    </div>
+  </section>
+
   <!-- CAMPAIGN INFLUENCE -->
   <section>
     <div class="sec-h"><span class="tick"></span><h3>Campaign Influence on Pipeline</h3><span class="pill">top 12</span><span class="src">Salesforce campaign members → opp contact roles</span></div>
@@ -291,6 +314,14 @@ const sourceByMonth={ // index 0..5 = Jan..Jun
 const mqlSource=[['Offline Sources',209],['Direct Traffic',120],['Other Campaigns',30],
   ['Email Marketing',27],['Organic Search',23],['Paid Search',11],['Referrals',8],
   ['Organic Social',4],['Paid Social',1]];
+// Offline bucket decomposition (YTD)
+const offlineContacts=[['Uncategorized',27422],['Other Import',8207],['Event - Sponsored/Conf',6521],['ABM Target List',6278],['Event - Webinar',123],['Partner List',56]];
+const offlinePipe=[ /* category, open, won */
+  ['Uncategorized',4172872.90,785146.80],
+  ['Other Import',764402.50,137500],
+  ['Event - Sponsored/Conf',666546.00,107081.61],
+  ['ABM Target List',77920.00,4600]];
+
 const campInfl=[
   ['AI in Compliance Webinar','Webinar',3948647.80,695754],
   ['SMC Article','Gated Asset',3473434.60,267844],
@@ -422,6 +453,27 @@ new Chart(document.getElementById('mqlSource'),{
     plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+' MQLs'}}},
     scales:{x:{grid:{color:'#f0efef'},ticks:{color:BRAND.gray}},y:noGrid}}
 });
+// Offline decomposition — contacts (count) and pipeline ($)
+new Chart(document.getElementById('offlineContacts'),{
+  type:'bar',
+  data:{labels:offlineContacts.map(d=>d[0]),
+    datasets:[{data:offlineContacts.map(d=>d[1]),
+      backgroundColor:offlineContacts.map(d=>d[0]==='Uncategorized'?BRAND.gray:BRAND.red),borderRadius:3}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtNum(c.parsed.x)+' contacts'}}},
+    scales:{x:{grid:{color:'#f0efef'},ticks:{color:BRAND.gray}},y:noGrid}}
+});
+new Chart(document.getElementById('offlinePipe'),{
+  type:'bar',
+  data:{labels:offlinePipe.map(d=>d[0]),
+    datasets:[
+      {label:'Open Pipeline',data:offlinePipe.map(d=>d[1]),backgroundColor:offlinePipe.map(d=>d[0]==='Uncategorized'?BRAND.gray:BRAND.red),borderRadius:3},
+      {label:'Won',data:offlinePipe.map(d=>d[2]),backgroundColor:offlinePipe.map(d=>d[0]==='Uncategorized'?'#c9c7c7':BRAND.redSoft),borderRadius:3}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmtUSD(c.parsed.x)}}},
+    scales:{x:yMoney,y:noGrid}}
+});
+
 new Chart(document.getElementById('campInfl'),{
   type:'bar',
   data:{labels:campInfl.map(c=>c[0]),
