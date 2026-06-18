@@ -268,6 +268,12 @@
         <div class="legend-note">Most Offline <b>revenue</b> is still uncategorized — the contacts on those deals lack import fields. Populating Import Source on deal-associated contacts would close this gap.</div>
       </div>
     </div>
+    <div class="chart-card" style="margin-top:16px">
+      <h4>Event-Sourced Pipeline &amp; Revenue <span style="font-size:9.5px;font-weight:600;color:var(--red);background:#f0e6e7;padding:2px 7px;border-radius:20px;vertical-align:middle;margin-left:4px">YTD ONLY</span></h4>
+      <div class="ch-sub">Offline-origin contacts whose import category is an event (sponsored/conference or webinar) · 23 opps · $745K open · $107K won</div>
+      <div class="chart-wrap tall"><canvas id="eventPipe"></canvas></div>
+      <div class="legend-note"><b>FINRA 2026 Conference</b> is the standout — 10 opps, $286K open, and the only event with closed-won revenue ($107K) YTD. The FINRA franchise (2025+2026) plus SIFMA and NSCP drive most event-sourced pipeline. <b>Note:</b> MQL counts for this slice are unreliable (the Salesforce MQL-date mirror undercounts vs. HubSpot), so this view shows pipeline &amp; revenue only — the measures that trace cleanly through opportunity contact roles.</div>
+    </div>
   </section>
 
   <!-- CAMPAIGN INFLUENCE -->
@@ -344,6 +350,18 @@ const mqlDrill={
 
 // Offline bucket decomposition (YTD)
 const offlineContacts=[['Uncategorized',27422],['Other Import',8207],['Event - Sponsored/Conf',6521],['ABM Target List',6278],['Event - Webinar',123],['Partner List',56]];
+// Event-sourced (Offline-origin, event import category) pipeline & revenue by named event
+const eventPipe=[ /* event, open, won */
+  ['FINRA 2026 Conference',286037,107081.61],
+  ['2025 FINRA',244388,0],
+  ['2025 SIFMA',73233,0],
+  ['2026 FINRA',57888,0],
+  ['2025-Q1 RSL Webinar',54576,0],
+  ['2023 NSCP',29300,0],
+  ['2024 NSCP',0,0],
+  ['2026 IAA Compliance Conf',0,0],
+  ['2025 NSCP',0,0]];
+
 const offlinePipe=[ /* category, open, won */
   ['Uncategorized',4172872.90,785146.80],
   ['Other Import',764402.50,137500],
@@ -521,6 +539,16 @@ new Chart(document.getElementById('offlinePipe'),{
     datasets:[
       {label:'Open Pipeline',data:offlinePipe.map(d=>d[1]),backgroundColor:offlinePipe.map(d=>d[0]==='Uncategorized'?BRAND.gray:BRAND.red),borderRadius:3},
       {label:'Won',data:offlinePipe.map(d=>d[2]),backgroundColor:offlinePipe.map(d=>d[0]==='Uncategorized'?'#c9c7c7':BRAND.redSoft),borderRadius:3}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmtUSD(c.parsed.x)}}},
+    scales:{x:yMoney,y:noGrid}}
+});
+new Chart(document.getElementById('eventPipe'),{
+  type:'bar',
+  data:{labels:eventPipe.map(d=>d[0]),
+    datasets:[
+      {label:'Open Pipeline',data:eventPipe.map(d=>d[1]),backgroundColor:BRAND.red,borderRadius:3},
+      {label:'Won Revenue',data:eventPipe.map(d=>d[2]),backgroundColor:BRAND.black,borderRadius:3}]},
   options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
     plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmtUSD(c.parsed.x)}}},
     scales:{x:yMoney,y:noGrid}}
