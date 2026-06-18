@@ -106,6 +106,18 @@
 
   .legend-note{font-size:11px;color:var(--gray);margin-top:10px;padding-left:2px}
 
+  /* ---- drill-down panel ---- */
+  .drill{margin-top:12px;border-top:1px dashed var(--thin);padding-top:0;max-height:0;overflow:hidden;transition:max-height .3s ease}
+  .drill.open{max-height:520px;padding-top:12px}
+  .drill .dh{font-size:11.5px;font-weight:700;color:var(--black);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .drill .dh .x{margin-left:auto;cursor:pointer;color:var(--gray);font-weight:700;font-size:13px;border:0;background:none;padding:2px 6px;border-radius:4px}
+  .drill .dh .x:hover{background:var(--gray-light);color:var(--black)}
+  .drill table{font-size:11.5px}
+  .drill thead th{padding:6px 10px;font-size:9.5px}
+  .drill tbody td{padding:6px 10px}
+  .drill .bar{height:7px;border-radius:4px;background:var(--red);display:inline-block;vertical-align:middle;min-width:2px}
+  .drill .note{font-size:10.5px;color:var(--gray);margin-top:8px;font-style:italic}
+
   footer{text-align:center;font-size:11px;color:var(--gray);padding:26px 0 10px;
     border-top:1px solid var(--thin);margin-top:10px}
   footer b{color:var(--black)}
@@ -200,8 +212,9 @@
     <div class="grid2">
       <div class="chart-card">
         <h4>MQLs by Original Traffic Source <span style="font-size:9.5px;font-weight:600;color:var(--red);background:#f0e6e7;padding:2px 7px;border-radius:20px;vertical-align:middle;margin-left:4px">YTD ONLY</span></h4>
-        <div class="ch-sub">433 MQLs YTD · attribution at contact level</div>
+        <div class="ch-sub">433 MQLs YTD · <span style="color:var(--red);font-weight:600">click a bar to drill down →</span></div>
         <div class="chart-wrap"><canvas id="mqlSource"></canvas></div>
+        <div id="mqlDrill" class="drill"></div>
         <div class="legend-note">Offline Sources (209) + Direct Traffic (120) = 76% of MQLs sit in the two least-attributable buckets — a contact-source hygiene gap worth an AE/import-process follow-up.</div>
       </div>
       <div class="chart-card">
@@ -296,16 +309,16 @@ const oppsCreated=[38,42,36,33,49,26];
 const wonCount   =[10,9,6,8,12,2];
 const wonAmt     =[842135.61,115827,62032,202218.75,78498.80,4000];
 const openCount  =[12,21,22,18,36,24];
-const openAmt    =[444200.50,1755032,2253000,1659057.20,2446673.20,379232];
+const openAmt    =[444200.50,1755032,2253000,1659057.20,2453423.20,380449.60];
 
 // Revenue/pipeline by source, per month [won, open]; keyed by source
 const SOURCES=['Offline Sources','Email Marketing','Paid Search','Organic Search','Direct Traffic','Referrals','no source / no role'];
-const sourceByMonth={ // index 0..5 = Jan..Jun
- 'Offline Sources':   [[717175.61,444200.50],[82827,1163953],[60782,1789506.20],[105305,568795],[64238.80,1412354.70],[4000,344482]],
+const sourceByMonth={ // index 0..5 = Jan..Jun; [won, open]; contact-level source, non-Offline preferred over deal/Offline
+ 'Offline Sources':   [[717175.61,437412.50],[82827,960278],[60782,1772006.20],[105305,231389],[64238.80,1419104.70],[4000,344482]],
  'Email Marketing':   [[0,0],[0,83399],[0,0],[0,882450],[0,0],[0,0]],
  'Paid Search':       [[88600,0],[0,426300],[0,220228.80],[0,0],[0,345350],[0,0]],
- 'Organic Search':    [[10000,0],[13000,0],[0,91974],[59653.75,0],[0,276503.50],[0,9500]],
- 'Direct Traffic':    [[0,0],[20000,19160],[1250,116536],[13800,156112.20],[0,85121],[0,25250]],
+ 'Organic Search':    [[10000,0],[13000,0],[0,109474],[59653.75,0],[0,276503.50],[0,10717.60]],
+ 'Direct Traffic':    [[0,6788],[20000,222835],[1250,116536],[13800,493518.20],[0,85121],[0,25250]],
  'Referrals':         [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]],
  'no source / no role':[[26360,0],[0,62220],[0,34755],[23460,51700],[14260,327344],[0,0]]
 };
@@ -314,6 +327,21 @@ const sourceByMonth={ // index 0..5 = Jan..Jun
 const mqlSource=[['Offline Sources',209],['Direct Traffic',120],['Other Campaigns',30],
   ['Email Marketing',27],['Organic Search',23],['Paid Search',11],['Referrals',8],
   ['Organic Social',4],['Paid Social',1]];
+// MQL source drill-downs (YTD) — keyed by source label as shown in mqlSource
+// Real HubSpot Original Traffic Source Drill-Down data. note flags coverage.
+const mqlDrill={
+ 'Paid Search':{by:'Google Ads campaign',rows:[
+    ['Brand RLSA (rlsa_lead_brand)',4],['Brand Search (all_lead_brand)',3],
+    ['Display B2B Generic',2],['Generic Solution-Aware',1],['Ad Review (legacy)',1]],note:'Complete — all 11 Paid Search MQLs; search terms incl. "red oak compliance", "compliance software".'},
+ 'Organic Search':{by:'search engine',rows:[['Google',17],['Bing',6]],note:'Complete — all 23 Organic MQLs. Keywords are encrypted (SSL) so only engine is available.'},
+ 'Offline Sources':{by:'import category',rows:[
+    ['Uncategorized / SF-origin','~50%'],['ABM Target List',6278],['Event - Sponsored/Conf',6521],
+    ['Other Import',8207],['Event - Webinar',123]],note:'Contact-level (full Offline population, 44% categorized). Many "SF-origin" rows are Salesforce-created records stamped Offline by sync — not true offline marketing.'},
+ 'Direct Traffic':{by:'landing page (representative)',rows:[
+    ['/request-demo',28],['/contact',5],['/events/accelerate-2026',3],
+    ['/4u-clientwebinar',2],['other pages','~80']],note:'Representative sample from the contact mirror — landing-page drill-down not exhaustively pulled for all 120 Direct MQLs.'}
+};
+
 // Offline bucket decomposition (YTD)
 const offlineContacts=[['Uncategorized',27422],['Other Import',8207],['Event - Sponsored/Conf',6521],['ABM Target List',6278],['Event - Webinar',123],['Partner List',56]];
 const offlinePipe=[ /* category, open, won */
@@ -445,14 +473,38 @@ Chart.defaults.font.family="'Roboto',sans-serif";
 Chart.defaults.font.size=11;
 Chart.defaults.color=BRAND.black;
 
-new Chart(document.getElementById('mqlSource'),{
+const mqlSourceChart=new Chart(document.getElementById('mqlSource'),{
   type:'bar',
   data:{labels:mqlSource.map(d=>d[0]),
     datasets:[{data:mqlSource.map(d=>d[1]),backgroundColor:mqlSource.map((d,i)=>i<2?BRAND.gray:BRAND.red),borderRadius:3}]},
   options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+' MQLs'}}},
+    onClick:(e,els)=>{ if(els.length){ openMqlDrill(mqlSource[els[0].index][0]); } },
+    onHover:(e,els)=>{ e.native.target.style.cursor=els.length?'pointer':'default'; },
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+' MQLs · click to drill down'}}},
     scales:{x:{grid:{color:'#f0efef'},ticks:{color:BRAND.gray}},y:noGrid}}
 });
+
+function openMqlDrill(src){
+  const panel=document.getElementById('mqlDrill');
+  const d=mqlDrill[src];
+  if(!d){
+    panel.innerHTML='<div class="dh">'+src+'<button class="x" onclick="closeMqlDrill()">✕</button></div>'+
+      '<div class="note">No drill-down detail available for this source.</div>';
+    panel.classList.add('open'); return;
+  }
+  const max=Math.max(...d.rows.map(r=>typeof r[1]==='number'?r[1]:0))||1;
+  const body=d.rows.map(r=>{
+    const val=typeof r[1]==='number'?r[1].toLocaleString():r[1];
+    const w=typeof r[1]==='number'?Math.round(r[1]/max*120):4;
+    return '<tr><td>'+r[0]+'</td><td class="mono" style="text-align:right">'+val+'</td>'+
+      '<td style="width:130px"><span class="bar" style="width:'+w+'px"></span></td></tr>';
+  }).join('');
+  panel.innerHTML='<div class="dh">'+src+' — by '+d.by+'<button class="x" onclick="closeMqlDrill()">✕</button></div>'+
+    '<table><thead><tr><th>'+d.by+'</th><th style="text-align:right">MQLs</th><th></th></tr></thead><tbody>'+body+'</tbody></table>'+
+    '<div class="note">'+d.note+'</div>';
+  panel.classList.add('open');
+}
+function closeMqlDrill(){ document.getElementById('mqlDrill').classList.remove('open'); }
 // Offline decomposition — contacts (count) and pipeline ($)
 new Chart(document.getElementById('offlineContacts'),{
   type:'bar',
