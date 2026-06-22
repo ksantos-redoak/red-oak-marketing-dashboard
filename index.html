@@ -245,6 +245,13 @@
         <div class="chart-wrap"><canvas id="wonBySource"></canvas></div>
       </div>
     </div>
+    <div class="chart-card" style="margin-top:16px">
+      <h4>Paid Ads Pipeline &amp; Revenue <span style="font-size:9.5px;font-weight:600;color:var(--red);background:#f0e6e7;padding:2px 7px;border-radius:20px;vertical-align:middle;margin-left:4px">YTD ONLY</span></h4>
+      <div class="ch-sub">opps with a Paid Search / Paid Social contact, by Google Ads campaign · 10 opps · $1.10M open · $88.6K won · <span style="color:var(--red);font-weight:600">click a bar to see search terms →</span></div>
+      <div class="chart-wrap tall"><canvas id="paidPipe"></canvas></div>
+      <div id="paidDrill" class="drill"></div>
+      <div class="legend-note">All paid-sourced pipeline is <b>Paid Search</b> (no Paid Social opps YTD). Brand campaigns (RLSA + brand search) hold the most open pipeline ($844K across 7 opps); the lone closed-won ($88.6K) came through a generic "software" term. Campaign names follow the <code>rla_[funnel-stage]_…</code> Google Ads convention — BOFU = bottom-of-funnel/brand, MOFU/TOFU = mid/top.</div>
+    </div>
   </section>
 
   <!-- INSIDE THE OFFLINE BUCKET -->
@@ -350,6 +357,19 @@ const mqlDrill={
 
 // Offline bucket decomposition (YTD)
 const offlineContacts=[['Uncategorized',27422],['Other Import',8207],['Event - Sponsored/Conf',6521],['ABM Target List',6278],['Event - Webinar',123],['Partner List',56]];
+// Paid ads pipeline & revenue by Google Ads campaign [label, open, won, opps]
+const paidPipe=[
+  ['Brand RLSA (BOFU)',426300,0,2],
+  ['Brand Search (BOFU)',418100,0,5],
+  ['Brand (generic label)',147478.80,0,1],
+  ['Generic "software"',108250,88600,2]];
+// search-term drill-down per campaign (from Original Source Drill-Down 2)
+const paidDrill={
+  'Brand RLSA (BOFU)':{terms:[['red oak',1],['redoak subscription',1]],note:'Branded retargeting search ads.'},
+  'Brand Search (BOFU)':{terms:[['red oak compliance',3],['red oak',1],['complio',1]],note:'Branded search; highest opp count.'},
+  'Brand (generic label)':{terms:[['(legacy admaster label)',1]],note:'Older campaign-naming label.'},
+  'Generic "software"':{terms:[['compliance software',1],['ad review process',1]],note:'Generic/solution-aware terms — the only paid path with closed-won YTD.'}};
+
 // Event-sourced (Offline-origin, event import category) pipeline & revenue by named event
 const eventPipe=[ /* event, open, won */
   ['FINRA 2026 Conference',286037,107081.61],
@@ -543,6 +563,32 @@ new Chart(document.getElementById('offlinePipe'),{
     plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmtUSD(c.parsed.x)}}},
     scales:{x:yMoney,y:noGrid}}
 });
+const paidPipeChart=new Chart(document.getElementById('paidPipe'),{
+  type:'bar',
+  data:{labels:paidPipe.map(d=>d[0]),
+    datasets:[
+      {label:'Open Pipeline',data:paidPipe.map(d=>d[1]),backgroundColor:BRAND.red,borderRadius:3},
+      {label:'Won Revenue',data:paidPipe.map(d=>d[2]),backgroundColor:BRAND.black,borderRadius:3}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    onClick:(e,els)=>{ if(els.length){ openPaidDrill(paidPipe[els[0].index][0]); } },
+    onHover:(e,els)=>{ e.native.target.style.cursor=els.length?'pointer':'default'; },
+    plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmtUSD(c.parsed.x)+' · click for terms'}}},
+    scales:{x:yMoney,y:noGrid}}
+});
+function openPaidDrill(camp){
+  const panel=document.getElementById('paidDrill');
+  const d=paidDrill[camp];
+  if(!d){ panel.classList.remove('open'); return; }
+  const max=Math.max(...d.terms.map(t=>t[1]))||1;
+  const body=d.terms.map(t=>'<tr><td>'+t[0]+'</td><td class="mono" style="text-align:right">'+t[1]+'</td>'+
+    '<td style="width:130px"><span class="bar" style="width:'+Math.round(t[1]/max*120)+'px"></span></td></tr>').join('');
+  panel.innerHTML='<div class="dh">'+camp+' — search terms<button class="x" onclick="closePaidDrill()">✕</button></div>'+
+    '<table><thead><tr><th>search term</th><th style="text-align:right">MQLs</th><th></th></tr></thead><tbody>'+body+'</tbody></table>'+
+    '<div class="note">'+d.note+'</div>';
+  panel.classList.add('open');
+}
+function closePaidDrill(){ document.getElementById('paidDrill').classList.remove('open'); }
+
 new Chart(document.getElementById('eventPipe'),{
   type:'bar',
   data:{labels:eventPipe.map(d=>d[0]),
