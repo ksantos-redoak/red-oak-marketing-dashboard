@@ -168,7 +168,7 @@
 
   <!-- KPI TILES -->
   <div class="kpis">
-    <div class="kpi"><div class="lab">MQLs</div><div class="val" id="kMql">519</div><div class="note" id="kMqlN">marketing qualified, YTD</div></div>
+    <div class="kpi"><div class="lab">MQLs</div><div class="val" id="kMql">178</div><div class="note" id="kMqlN">MQL_Date stamp, YTD</div></div>
     <div class="kpi"><div class="lab">Demo Requests</div><div class="val" id="kDemo">126</div><div class="note">first-touch demo conversions</div></div>
     <div class="kpi"><div class="lab">Open Pipeline</div><div class="val" id="kOpen">$8.98M</div><div class="note" id="kOpenN">134 new-biz opps open</div></div>
     <div class="kpi"><div class="lab">Closed-Won</div><div class="val" id="kWon">$1.49M</div><div class="note" id="kWonN">52 deals won</div></div>
@@ -212,10 +212,10 @@
     <div class="grid2">
       <div class="chart-card">
         <h4>MQLs by Original Traffic Source <span style="font-size:9.5px;font-weight:600;color:var(--red);background:#f0e6e7;padding:2px 7px;border-radius:20px;vertical-align:middle;margin-left:4px">YTD ONLY</span></h4>
-        <div class="ch-sub">519 MQLs YTD · <span style="color:var(--red);font-weight:600">click a bar to drill down →</span></div>
+        <div class="ch-sub">178 MQLs YTD (MQL_Date stamp) · <span style="color:var(--red);font-weight:600">click a bar to drill down →</span></div>
         <div class="chart-wrap"><canvas id="mqlSource"></canvas></div>
         <div id="mqlDrill" class="drill"></div>
-        <div class="legend-note">Offline Sources (270) + Direct Traffic (138) = 79% of MQLs sit in the two least-attributable buckets — a contact-source hygiene gap worth an AE/import-process follow-up.</div>
+        <div class="legend-note">Counted on <b>MQL_Date</b> (Red Oak's qualification stamp tied to the custom Lifecycle Stage Primary), not HubSpot standard-stage entries — which over-counted ~3x by including re-imports and bulk Offline loads that never truly qualified. Under the real definition, <b>Paid Search (54) is the #1 MQL source</b>, ahead of Direct (49) and Offline (48).</div>
       </div>
       <div class="chart-card">
         <h4>MQLs &amp; Demo Requests by Month</h4>
@@ -314,7 +314,7 @@ const months=['Jan','Feb','Mar','Apr','May','Jun*'];
 const monthFull=['January','February','March','April','May','June (partial)'];
 
 // HubSpot — MQLs by lifecycle-entry date; demos by first-conversion date
-const mqlByMonth =[84,178,91,27,16,123];
+const mqlByMonth =[44,53,28,16,16,21];
 const demoByMonth=[36,33,19,14,13,11];
 
 // Salesforce (via Snowflake) — new-business opps only (renewals excluded)
@@ -337,22 +337,21 @@ const sourceByMonth={ // index 0..5 = Jan..Jun; [won, open]; contact-level sourc
 };
 
 // YTD-only panels (do not split reliably by month)
-const mqlSource=[['Offline Sources',270],['Direct Traffic',138],['Other Campaigns',31],
-  ['Email Marketing',27],['Organic Search',24],['Paid Search',15],['Referrals',9],
-  ['Organic Social',4],['Paid Social',1]];
+const mqlSource=[['Paid Search',54],['Direct Traffic',49],['Offline Sources',48],
+  ['Organic Search',14],['Referrals',5],['Email Marketing',4],['Unknown',4]];
 // MQL source drill-downs (YTD) — keyed by source label as shown in mqlSource
 // Real HubSpot Original Traffic Source Drill-Down data. note flags coverage.
 const mqlDrill={
  'Paid Search':{by:'Google Ads campaign',rows:[
-    ['Brand RLSA (rlsa_lead_brand)',4],['Brand Search (all_lead_brand)',3],
-    ['Display B2B Generic',2],['Generic Solution-Aware',1],['Ad Review (legacy)',1]],note:'Complete — all 11 Paid Search MQLs; search terms incl. "red oak compliance", "compliance software".'},
- 'Organic Search':{by:'search engine',rows:[['Google',17],['Bing',6]],note:'Complete — all 23 Organic MQLs. Keywords are encrypted (SSL) so only engine is available.'},
+    ['Display B2B Generic (TOFU)',34],['Brand Search (BOFU)',10],['Brand RLSA (BOFU)',6],
+    ['Generic Pain-Points (TOFU)',2],['Solution-Aware (MOFU)',1],['(unattributed)',1]],note:'Complete — all 54 Paid Search MQLs. TOFU display generic is the largest single driver.'},
+ 'Organic Search':{by:'search engine',rows:[['Unknown keywords (SSL)',14]],note:'All 14 Organic MQLs — Google encrypts organic keywords, so only "SSL" is recorded.'},
  'Offline Sources':{by:'import category',rows:[
     ['Uncategorized / SF-origin','~50%'],['ABM Target List',6278],['Event - Sponsored/Conf',6521],
-    ['Other Import',8207],['Event - Webinar',123]],note:'Contact-level (full Offline population, 44% categorized). Many "SF-origin" rows are Salesforce-created records stamped Offline by sync — not true offline marketing.'},
- 'Direct Traffic':{by:'landing page (representative)',rows:[
-    ['/request-demo',28],['/contact',5],['/events/accelerate-2026',3],
-    ['/4u-clientwebinar',2],['other pages','~80']],note:'Representative sample from the contact mirror — landing-page drill-down not exhaustively pulled for all 120 Direct MQLs.'}
+    ['Other Import',8207],['Event - Webinar',123]],note:'Contact-level across the full Offline population (44% categorized). Many SF-origin rows are Salesforce-created records stamped Offline by sync — not true offline marketing.'},
+ 'Direct Traffic':{by:'landing page',rows:[
+    ['/request-demo',29],['/contact',5],['/events/accelerate-2026',3],
+    ['/about',2],['/4u-clientwebinar',2],['homepage',2],['other pages',6]],note:'All 49 Direct MQLs by entry landing page; /request-demo dominates.'}
 };
 
 // Offline bucket decomposition (YTD)
@@ -514,7 +513,7 @@ Chart.defaults.color=BRAND.black;
 const mqlSourceChart=new Chart(document.getElementById('mqlSource'),{
   type:'bar',
   data:{labels:mqlSource.map(d=>d[0]),
-    datasets:[{data:mqlSource.map(d=>d[1]),backgroundColor:mqlSource.map((d,i)=>i<2?BRAND.gray:BRAND.red),borderRadius:3}]},
+    datasets:[{data:mqlSource.map(d=>d[1]),backgroundColor:mqlSource.map(d=>(d[0]==='Offline Sources'||d[0]==='Unknown')?BRAND.gray:BRAND.red),borderRadius:3}]},
   options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
     onClick:(e,els)=>{ if(els.length){ openMqlDrill(mqlSource[els[0].index][0]); } },
     onHover:(e,els)=>{ e.native.target.style.cursor=els.length?'pointer':'default'; },
