@@ -142,7 +142,7 @@
     <div class="logo">R</div>
     <h1>Marketing Attribution <span>· GTM Performance</span></h1>
   </div>
-  <div class="asof">Live snapshot · <b>YTD 2026</b> · as of <b>Jun 25, 2026</b></div>
+  <div class="asof">Live snapshot · <b>YTD 2026</b> · as of <b>Jul 13, 2026</b></div>
 </header>
 
 <nav class="rail" id="periodRail">
@@ -150,15 +150,16 @@
   <span class="sep"></span>
   <button data-period="0">JAN</button><button data-period="1">FEB</button><button data-period="2">MAR</button>
   <button data-period="3">APR</button><button data-period="4">MAY</button><button data-period="5">JUN</button>
+  <button data-period="6">JUL</button>
   <span class="sep"></span>
-  <button data-period="Q1">Q1</button><button data-period="Q2">Q2</button>
+  <button data-period="Q1">Q1</button><button data-period="Q2">Q2</button><button data-period="Q3">Q3</button>
 </nav>
 
 <main>
   <div class="pagehead">
     <div>
       <h2 id="periodTitle">Year-to-Date 2026</h2>
-      <div class="sub" id="periodSub">New-business pipeline (renewals excluded) · HubSpot + Salesforce · Jan 1 – Jun 25</div>
+      <div class="sub" id="periodSub">New-business pipeline (renewals excluded) · HubSpot + Salesforce · Jan 1 – Jul 13</div>
     </div>
     <div class="stamp">
       <div class="box"><div class="k">Months</div><div class="v">5.5</div></div>
@@ -169,11 +170,11 @@
   <!-- KPI TILES -->
   <div class="kpis">
     <div class="kpi"><div class="lab">MQLs</div><div class="val" id="kMql">178</div><div class="note" id="kMqlN">MQL_Date stamp, YTD</div></div>
-    <div class="kpi"><div class="lab">Demo Requests</div><div class="val" id="kDemo">126</div><div class="note">first-touch demo conversions</div></div>
-    <div class="kpi"><div class="lab">Open Pipeline</div><div class="val" id="kOpen">$8.98M</div><div class="note" id="kOpenN">134 new-biz opps open</div></div>
-    <div class="kpi"><div class="lab">Closed-Won</div><div class="val" id="kWon">$1.49M</div><div class="note" id="kWonN">52 deals won</div></div>
-    <div class="kpi"><div class="lab">Avg Won Deal</div><div class="val" id="kAvg">$28.6K</div><div class="note">new-business mean</div></div>
-    <div class="kpi muted"><div class="lab">Win Rate</div><div class="val" id="kWin">54.7%</div><div class="note">of closed new-biz opps</div></div>
+    <div class="kpi"><div class="lab">Demo Requests</div><div class="val" id="kDemo">142</div><div class="note">first-touch demo conversions</div></div>
+    <div class="kpi"><div class="lab">Open Pipeline</div><div class="val" id="kOpen">$9.19M</div><div class="note" id="kOpenN">137 new-biz opps open</div></div>
+    <div class="kpi"><div class="lab">Closed-Won</div><div class="val" id="kWon">$1.65M</div><div class="note" id="kWonN">58 deals won</div></div>
+    <div class="kpi"><div class="lab">Avg Won Deal</div><div class="val" id="kAvg">$28.4K</div><div class="note">new-business mean</div></div>
+    <div class="kpi muted"><div class="lab">Win Rate</div><div class="val" id="kWin">53.2%</div><div class="note">of closed new-biz opps</div></div>
   </div>
 
   <!-- MARKETING LEADS TABLE -->
@@ -188,7 +189,7 @@
         <tbody></tbody>
       </table>
     </div>
-    <div class="legend-note">* June is a partial month (through Jun 25). MQL counts use the lifecycle-stage entry date, capturing every contact that became an MQL — not just those still sitting in the stage today.</div>
+    <div class="legend-note">* July is a partial month (through Jul 13). MQLs are counted on <b>MQL_Date</b> (Red Oak's qualification stamp tied to Lifecycle Stage Primary), which records the event regardless of the contact's current stage.</div>
   </section>
 
   <!-- REVENUE / PIPELINE TABLE -->
@@ -236,13 +237,15 @@
     <div class="grid2">
       <div class="chart-card">
         <h4>Open Pipeline by Source</h4>
-        <div class="ch-sub" id="openSub">$8.94M new-business open pipeline</div>
+        <div class="ch-sub" id="openSub">$9.19M new-business open pipeline · <span style="color:var(--red);font-weight:600">click a bar to drill down →</span></div>
         <div class="chart-wrap"><canvas id="openBySource"></canvas></div>
+        <div id="openDrill" class="drill"></div>
       </div>
       <div class="chart-card">
         <h4>Closed-Won Revenue by Source</h4>
-        <div class="ch-sub" id="wonSub">$1.30M won YTD</div>
+        <div class="ch-sub" id="wonSub">$1.65M won YTD · <span style="color:var(--red);font-weight:600">click a bar to drill down →</span></div>
         <div class="chart-wrap"><canvas id="wonBySource"></canvas></div>
+        <div id="wonDrill" class="drill"></div>
       </div>
     </div>
     <div class="chart-card" style="margin-top:16px">
@@ -259,27 +262,27 @@
     <div class="sec-h"><span class="tick"></span><h3>Inside the Offline Bucket</h3><span class="pill" style="background:#f0e6e7;color:var(--red)">YTD only</span><span class="src">Sourced By · Import Source Category / Detail</span></div>
     <div class="caveat">
       <span class="ic">!</span>
-      <p><b>Offline ≠ unknowable.</b> The Offline bucket (the largest source on both MQLs and pipeline) decomposes once you read <b>Sourced By</b> and <b>Import Source Category/Detail</b>. Coverage differs by view: <b>~44% of Offline contacts</b> carry an import category, but only a minority of Offline <b>opportunities</b> do — so the contact-count breakdown below is solid, while the revenue breakdown still has a large uncategorized share. Where <b>Sourced By</b> is set, Offline is <b>~99% "Marketing - Outbound"</b> — i.e. marketing-driven list and event imports, not a true unknown.</p>
+      <p><b>Offline ≠ unknowable.</b> The Offline bucket decomposes via <b>Import Source Detail</b>. Both panels below now count <b>MQLs</b> and <b>pipeline</b> only (not the full raw contact list). Where <b>Sourced By</b> is set, Offline is <b>~99% "Marketing - Outbound"</b> — marketing-driven list and event imports, not a true unknown. A large share is still uncategorized or Salesforce-origin (records stamped Offline by sync); populating Import Source on those would close the gap.</p>
     </div>
     <div class="grid2">
       <div class="chart-card">
-        <h4>Offline Contacts by Import Category</h4>
-        <div class="ch-sub">48,607 Offline contacts · 44% categorized</div>
+        <h4>Offline MQLs by Import Source Detail</h4>
+        <div class="ch-sub">54 Offline MQLs YTD (MQL_Date basis)</div>
         <div class="chart-wrap"><canvas id="offlineContacts"></canvas></div>
-        <div class="legend-note">Top named sources: ABM "ICP - ADV Yes to 5L" (3,921), 6Sense Top 25 (1,955), 4U user/client imports, and conferences (SIFMA, FINRA, NSCP).</div>
+        <div class="legend-note">28 of 54 remain uncategorized / SF-origin. Named detail sources include 4U user imports, SIFMA, FINRA, NSCP, and the ICP ABM list.</div>
       </div>
       <div class="chart-card">
-        <h4>Offline New-Biz Pipeline by Import Category</h4>
+        <h4>Offline New-Biz Pipeline by Import Source Detail</h4>
         <div class="ch-sub">open pipeline from Offline-sourced opps</div>
         <div class="chart-wrap"><canvas id="offlinePipe"></canvas></div>
-        <div class="legend-note">Most Offline <b>revenue</b> is still uncategorized — the contacts on those deals lack import fields. Populating Import Source on deal-associated contacts would close this gap.</div>
+        <div class="legend-note">Most Offline pipeline is still uncategorized — the contacts on those deals lack import fields. Populating Import Source on deal-associated contacts would close this gap.</div>
       </div>
     </div>
     <div class="chart-card" style="margin-top:16px">
       <h4>Event-Sourced Pipeline &amp; Revenue <span style="font-size:9.5px;font-weight:600;color:var(--red);background:#f0e6e7;padding:2px 7px;border-radius:20px;vertical-align:middle;margin-left:4px">YTD ONLY</span></h4>
-      <div class="ch-sub">Offline-origin contacts whose import category is an event (sponsored/conference or webinar) · 23 opps · $745K open · $107K won</div>
+      <div class="ch-sub">Events sourced two ways: Import Source Detail (attendee lists) and, for Accelerate, campaign membership</div>
       <div class="chart-wrap tall"><canvas id="eventPipe"></canvas></div>
-      <div class="legend-note"><b>FINRA 2026 Conference</b> is the standout — 10 opps, $286K open, and the only event with closed-won revenue ($107K) YTD. The FINRA franchise (2025+2026) plus SIFMA and NSCP drive most event-sourced pipeline. <b>Note:</b> MQL counts for this slice are unreliable (the Salesforce MQL-date mirror undercounts vs. HubSpot), so this view shows pipeline &amp; revenue only — the measures that trace cleanly through opportunity contact roles.</div>
+      <div class="legend-note"><b>*Accelerate is measured differently.</b> Its attendees were never tagged with an event Import Source Detail — they're tracked as Salesforce <b>campaigns</b> — so Accelerate is shown on a <b>campaign-influence</b> basis (any opp touched by an Accelerate campaign member: 59 opps, $3.11M open, $710K won). That's a broader "touched" measure than the import-detail events beside it, so it isn't directly comparable — it's included because excluding Red Oak's flagship event entirely would understate event impact. The import-detail events (FINRA, SIFMA, NSCP) use single-source attribution. To make Accelerate directly comparable, its attendees would need tagging with <code>Import Source Detail</code>.</div>
     </div>
   </section>
 
@@ -298,7 +301,7 @@
   </section>
 
   <footer>
-    <b>Red Oak Compliance</b> · Marketing Attribution Dashboard · point-in-time snapshot, Jun 25 2026<br>
+    <b>Red Oak Compliance</b> · Marketing Attribution Dashboard · point-in-time snapshot, Jul 13 2026<br>
     Data: HubSpot (MQLs, sources, demos) + Salesforce via Snowflake BRONZE.SALESFORCE (pipeline, revenue, campaign influence). Regenerate to refresh. © 2026 Red Oak Compliance
   </footer>
 </main>
@@ -310,52 +313,66 @@ const fmtUSD=v=>v>=1e6?'$'+(v/1e6).toFixed(2)+'M':v>=1e3?'$'+(v/1e3).toFixed(0)+
 const fmtNum=v=>Math.round(v).toLocaleString();
 
 /* ===== MONTHLY DATA (real, HubSpot + Snowflake BRONZE.SALESFORCE) ===== */
-const months=['Jan','Feb','Mar','Apr','May','Jun*'];
-const monthFull=['January','February','March','April','May','June (partial)'];
+const months=['Jan','Feb','Mar','Apr','May','Jun','Jul*'];
+const monthFull=['January','February','March','April','May','June','July (partial)'];
 
 // HubSpot — MQLs by lifecycle-entry date; demos by first-conversion date
-const mqlByMonth =[44,53,28,16,16,21];
-const demoByMonth=[36,33,19,14,13,11];
+const mqlByMonth =[37,45,27,14,16,20,19];
+const demoByMonth=[35,33,18,13,13,16,14];
 
 // Salesforce (via Snowflake) — new-business opps only (renewals excluded)
-const oppsCreated=[38,41,36,33,49,32];
-const wonCount   =[11,9,6,10,13,3];
-const wonAmt     =[952535.61,115827,62032,253723.75,93298.80,8600];
-const openCount  =[11,20,22,17,35,29];
-const openAmt    =[333800.50,1755032,2253000,1614552.20,2588631.53,437136];
+const oppsCreated=[37,41,36,33,49,35,15];
+const wonCount   =[11,9,6,10,14,8,0];
+const wonAmt     =[952535.61,115827,62032,253723.75,152557.70,111472.50,0];
+const openCount  =[9,18,20,16,33,26,15];
+const openAmt    =[292800.50,1719108,2137030,1614552.20,2581404.30,718998.60,121849];
 
 // Revenue/pipeline by source, per month [won, open]; keyed by source
 const SOURCES=['Offline Sources','Email Marketing','Paid Search','Organic Search','Direct Traffic','Referrals','no source / no role'];
-const sourceByMonth={ // index 0..5 = Jan..Jun; [won, open]; contact-level source, non-Offline preferred over deal/Offline
- 'Offline Sources':   [[828775.61,327012.50],[82827,1022498],[60782,1806761.20],[112305,283089],[64238.80,1460863.03],[8600,401168.40]],
- 'Email Marketing':   [[0,0],[0,83399],[0,0],[0,882450],[0,0],[0,0]],
- 'Paid Search':       [[88600,0],[0,426300],[0,220228.80],[0,0],[0,453600],[0,0]],
- 'Organic Search':    [[10000,0],[13000,0],[0,109474],[59653.75,0],[14800,261703.50],[0,10717.60]],
- 'Direct Traffic':    [[0,6788],[20000,222835],[1250,116536],[58305,449013.20],[0,85121],[0,25250]],
- 'Referrals':         [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]],
- 'no source / no role':[[25160,0],[0,0],[0,0],[23460,0],[14260,327344],[0,0]]
+const sourceByMonth={ // index 0..6 = Jan..Jul; [won, open]; contact-level source, non-Offline preferred
+ 'Offline Sources':   [[828775.61,286012.50],[82827,1005734],[60782,1797261.20],[112305,283089],[123497.70,1336047.80],[74472.50,571122],[0,121849]],
+ 'Email Marketing':   [[0,0],[0,83399],[0,0],[0,882450],[0,0],[2500,0],[0,0]],
+ 'Paid Search':       [[88600,0],[0,426300],[0,113758.80],[0,0],[0,453600],[0,0],[0,0]],
+ 'Organic Search':    [[10000,0],[13000,0],[0,109474],[59653.75,0],[14800,379291.50],[9660,1057.60],[0,0]],
+ 'Direct Traffic':    [[0,6788],[20000,203675],[1250,116536],[58305,449013.20],[0,85121],[15180,25250],[0,0]],
+ 'Referrals':         [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]],
+ 'no source / no role':[[25160,0],[0,0],[0,0],[23460,0],[14260,327344],[9660,121569],[0,0]]
 };
 
 // YTD-only panels (do not split reliably by month)
-const mqlSource=[['Paid Search',54],['Direct Traffic',49],['Offline Sources',48],
-  ['Organic Search',14],['Referrals',5],['Email Marketing',4],['Unknown',4]];
-// MQL source drill-downs (YTD) — keyed by source label as shown in mqlSource
-// Real HubSpot Original Traffic Source Drill-Down data. note flags coverage.
+const mqlSource=[['Direct Traffic',54],['Offline Sources',54],['Paid Search',41],
+  ['Organic Search',15],['Referrals',6],['Email Marketing',4],['Unknown',4]];
+// MQL source drill-downs (YTD, MQL_Date basis) — counts are MQLs, not all contacts
 const mqlDrill={
  'Paid Search':{by:'Google Ads campaign',rows:[
-    ['Display B2B Generic (TOFU)',34],['Brand Search (BOFU)',10],['Brand RLSA (BOFU)',6],
-    ['Generic Pain-Points (TOFU)',2],['Solution-Aware (MOFU)',1],['(unattributed)',1]],note:'Complete — all 54 Paid Search MQLs. TOFU display generic is the largest single driver.'},
- 'Organic Search':{by:'search engine',rows:[['Unknown keywords (SSL)',14]],note:'All 14 Organic MQLs — Google encrypts organic keywords, so only "SSL" is recorded.'},
- 'Offline Sources':{by:'import category',rows:[
-    ['Uncategorized / SF-origin','~50%'],['ABM Target List',6278],['Event - Sponsored/Conf',6521],
-    ['Other Import',8207],['Event - Webinar',123]],note:'Contact-level across the full Offline population (44% categorized). Many SF-origin rows are Salesforce-created records stamped Offline by sync — not true offline marketing.'},
+    ['Display B2B Generic (TOFU)',18],['Brand Search (BOFU)',11],['Brand RLSA (BOFU)',6],
+    ['PMax Generic (MOFU)',3],['Solution-Aware (MOFU)',1],['Generic Marketing (TOFU)',1],['(unattributed)',1]],note:'All 41 Paid Search MQLs by campaign. TOFU display generic is the largest single driver.'},
+ 'Organic Search':{by:'search engine',rows:[['Google',11],['Bing',4]],note:'All 15 Organic MQLs by engine. Keywords are encrypted (SSL); engine is the deepest organic detail available.'},
+ 'Offline Sources':{by:'import source detail',rows:[
+    ['(uncategorized / SF-origin)',28],['2026-Q3 4U IC Admins',5],['2023 EOY Email Greeting',4],
+    ['2026 SIFMA',2],['2025 NSCP',2],['2026-Q2 4U Active IC Users',2],['ICP - ADV Yes to 5L (ABM)',2],
+    ['2025 FINRA',2],['other detail (1 each)',7]],note:'All 54 Offline MQLs by Import Source Detail. 28 remain uncategorized or Salesforce-origin (records stamped Offline by sync).'},
  'Direct Traffic':{by:'landing page',rows:[
-    ['/request-demo',29],['/contact',5],['/events/accelerate-2026',3],
-    ['/about',2],['/4u-clientwebinar',2],['homepage',2],['other pages',6]],note:'All 49 Direct MQLs by entry landing page; /request-demo dominates.'}
+    ['/request-demo',33],['/contact',5],['homepage',3],['/events/accelerate-2026',2],
+    ['/about',2],['/4u-clientwebinar',2],['other pages',7]],note:'All 54 Direct MQLs by entry landing page; /request-demo dominates.'}
 };
 
-// Offline bucket decomposition (YTD)
-const offlineContacts=[['Uncategorized',27422],['Other Import',8207],['Event - Sponsored/Conf',6521],['ABM Target List',6278],['Event - Webinar',123],['Partner List',56]];
+// Pipeline & won drill-down by source [label, open, won] — YTD, from contact drill-down fields
+const sourceDrill={
+ 'Offline Sources':{by:'import source detail',rows:[
+    ['(uncategorized / SF-origin)',4331739.00,894610.70],['2026-Q2 Clay Enrichment',453550,42320],
+    ['2026-Q2 4U Field Users',255588,101081.61],['2025 FINRA',244388,0],['ICP - ADV Yes to 5L (ABM)',202602,4600],
+    ['2023 EOY Email Greeting',162950,8500],['FINRA 2026 Conference',139007,6000],['2026-Q3 4U IC Admins',92002.50,93380],
+    ['IAPD Websites Over 50 (ABM)',77920,63772.50],['2025 SIFMA',73233,0],['other detail',68000,58424.50]],note:'Offline pipeline by Import Source Detail. Most sits in uncategorized/SF-origin; populating import fields on deal contacts would sharpen this.'},
+ 'Paid Search':{by:'Google Ads campaign',rows:[
+    ['Brand RLSA (BOFU)',426300,0],['Brand Search (BOFU)',345350,0],['Brand (generic label)',113758.80,0],['Generic "software"',0,88600]],note:'All paid-sourced opps by campaign. Brand terms hold the pipeline; a generic term produced the one closed-won.'},
+ 'Direct Traffic':{by:'landing page',rows:[
+    ['/request-demo',369564.20,0],['/4u-clientwebinar',13455,4600],['/integrations',0,20000],
+    ['/lp/4u',0,15180],['/contact',0,9200],['/admaster page',0,1250]],note:'Direct-sourced opps by entry landing page; /request-demo dominates open pipeline.'},
+ 'Organic Search':{by:'search engine',rows:[['Google',375241.10,104613.75],['Bing',97082,2500]],note:'Organic-sourced opps by engine.'},
+ 'Email Marketing':{by:'email campaign',rows:[['ai-webinar',965849,0],['accelerate_2026',0,2500]],note:'Email-sourced opps by campaign; the AI webinar drives nearly all open pipeline.'}
+};
+const offlineContacts=[['(uncategorized / SF-origin)',28],['2026-Q3 4U IC Admins',5],['2023 EOY Email Greeting',4],['2026 SIFMA',2],['2025 NSCP',2],['2026-Q2 4U Active IC Users',2],['ICP - ADV Yes to 5L',2],['2025 FINRA',2],['other (1 each)',7]];
 // Paid ads pipeline & revenue by Google Ads campaign [label, open, won, opps]
 const paidPipe=[
   ['Brand RLSA (BOFU)',426300,0,2],
@@ -370,22 +387,27 @@ const paidDrill={
   'Generic "software"':{terms:[['compliance software',1],['ad review process',1]],note:'Generic/solution-aware terms — the only paid path with closed-won YTD.'}};
 
 // Event-sourced (Offline-origin, event import category) pipeline & revenue by named event
-const eventPipe=[ /* event, open, won */
-  ['FINRA 2026 Conference',286037,107081.61],
+const eventPipe=[ /* event, open, won — import-detail basis unless noted */
+  ['Accelerate (campaign-influence)*',3112466.10,709576.30],
   ['2025 FINRA',244388,0],
+  ['FINRA 2026 Conference',139007,6000],
   ['2025 SIFMA',73233,0],
-  ['2026 FINRA',57888,0],
-  ['2025-Q1 RSL Webinar',54576,0],
-  ['2023 NSCP',29300,0],
-  ['2024 NSCP',0,0],
+  ['2023 NSCP',5000,0],
   ['2026 IAA Compliance Conf',0,0],
+  ['2024 NSCP',0,0],
   ['2025 NSCP',0,0]];
 
-const offlinePipe=[ /* category, open, won */
-  ['Uncategorized',4172872.90,785146.80],
-  ['Other Import',764402.50,137500],
-  ['Event - Sponsored/Conf',666546.00,107081.61],
-  ['ABM Target List',77920.00,4600]];
+const offlinePipe=[ /* detail, open, won */
+  ['(uncategorized / SF-origin)',4331739.00,894610.70],
+  ['2026-Q2 Clay Enrichment',453550,42320],
+  ['2026-Q2 4U Field Users',255588,101081.61],
+  ['2025 FINRA',244388,0],
+  ['ICP - ADV Yes to 5L (ABM)',202602,4600],
+  ['2023 EOY Email Greeting',162950,8500],
+  ['FINRA 2026 Conference',139007,6000],
+  ['2026-Q3 4U IC Admins',92002.50,93380],
+  ['IAPD Websites Over 50 (ABM)',77920,63772.50],
+  ['2025 SIFMA',73233,0]];
 
 const campInfl=[
   ['AI in Compliance Webinar','Webinar',3948647.80,695754],
@@ -404,20 +426,22 @@ const campInfl=[
 /* ===== PERIOD ENGINE ===== */
 // returns array of month indices for a period key
 function monthsFor(p){
-  if(p==='YTD') return [0,1,2,3,4,5];
+  if(p==='YTD') return [0,1,2,3,4,5,6];
   if(p==='Q1')  return [0,1,2];
   if(p==='Q2')  return [3,4,5];
+  if(p==='Q3')  return [6];
   return [parseInt(p,10)];
 }
 const sum=a=>a.reduce((x,y)=>x+y,0);
 const pick=(arr,idx)=>idx.map(i=>arr[i]);
 
 function periodLabel(p){
-  if(p==='YTD') return ['Year-to-Date 2026','New-business pipeline (renewals excluded) · HubSpot + Salesforce · Jan 1 – Jun 25'];
+  if(p==='YTD') return ['Year-to-Date 2026','New-business pipeline (renewals excluded) · HubSpot + Salesforce · Jan 1 – Jul 13'];
   if(p==='Q1')  return ['Q1 2026','Jan–Mar · new-business pipeline (renewals excluded)'];
-  if(p==='Q2')  return ['Q2 2026','Apr–Jun · Jun partial through the 25th'];
+  if(p==='Q2')  return ['Q2 2026','Apr–Jun · new-business pipeline (renewals excluded)'];
+  if(p==='Q3')  return ['Q3 2026','Jul partial through the 13th · new-business pipeline (renewals excluded)'];
   const i=parseInt(p,10);
-  return [monthFull[i]+' 2026', (i===5?'Partial month, through Jun 25 · ':'')+'new-business pipeline (renewals excluded)'];
+  return [monthFull[i]+' 2026', (i===6?'Partial month, through Jul 13 · ':'')+'new-business pipeline (renewals excluded)'];
 }
 
 /* ===== RENDERERS ===== */
@@ -547,17 +571,17 @@ new Chart(document.getElementById('offlineContacts'),{
   type:'bar',
   data:{labels:offlineContacts.map(d=>d[0]),
     datasets:[{data:offlineContacts.map(d=>d[1]),
-      backgroundColor:offlineContacts.map(d=>d[0]==='Uncategorized'?BRAND.gray:BRAND.red),borderRadius:3}]},
+      backgroundColor:offlineContacts.map(d=>d[0].indexOf('uncategorized')>-1?BRAND.gray:BRAND.red),borderRadius:3}]},
   options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtNum(c.parsed.x)+' contacts'}}},
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtNum(c.parsed.x)+' MQLs'}}},
     scales:{x:{grid:{color:'#f0efef'},ticks:{color:BRAND.gray}},y:noGrid}}
 });
 new Chart(document.getElementById('offlinePipe'),{
   type:'bar',
   data:{labels:offlinePipe.map(d=>d[0]),
     datasets:[
-      {label:'Open Pipeline',data:offlinePipe.map(d=>d[1]),backgroundColor:offlinePipe.map(d=>d[0]==='Uncategorized'?BRAND.gray:BRAND.red),borderRadius:3},
-      {label:'Won',data:offlinePipe.map(d=>d[2]),backgroundColor:offlinePipe.map(d=>d[0]==='Uncategorized'?'#c9c7c7':BRAND.redSoft),borderRadius:3}]},
+      {label:'Open Pipeline',data:offlinePipe.map(d=>d[1]),backgroundColor:offlinePipe.map(d=>d[0].indexOf('uncategorized')>-1?BRAND.gray:BRAND.red),borderRadius:3},
+      {label:'Won',data:offlinePipe.map(d=>d[2]),backgroundColor:offlinePipe.map(d=>d[0].indexOf('uncategorized')>-1?'#c9c7c7':BRAND.redSoft),borderRadius:3}]},
   options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
     plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmtUSD(c.parsed.x)}}},
     scales:{x:yMoney,y:noGrid}}
@@ -625,15 +649,35 @@ charts.demand=new Chart(document.getElementById('demandTrend'),{
 charts.open=new Chart(document.getElementById('openBySource'),{
   type:'bar',data:{labels:[],datasets:[{data:[],borderRadius:3}]},
   options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtUSD(c.parsed.x)}}},
+    onClick:(e,els)=>{ if(els.length){ openSourceDrill('openDrill', charts.open.data.labels[els[0].index], 'open'); } },
+    onHover:(e,els)=>{ e.native.target.style.cursor=els.length?'pointer':'default'; },
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtUSD(c.parsed.x)+' · click to drill down'}}},
     scales:{x:yMoney,y:noGrid}}
 });
 charts.won=new Chart(document.getElementById('wonBySource'),{
   type:'bar',data:{labels:[],datasets:[{data:[],borderRadius:3}]},
   options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtUSD(c.parsed.x)}}},
+    onClick:(e,els)=>{ if(els.length){ openSourceDrill('wonDrill', charts.won.data.labels[els[0].index], 'won'); } },
+    onHover:(e,els)=>{ e.native.target.style.cursor=els.length?'pointer':'default'; },
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtUSD(c.parsed.x)+' · click to drill down'}}},
     scales:{x:yMoney,y:noGrid}}
 });
+// shared drill renderer for source pipeline/won charts
+function openSourceDrill(panelId, source, metric){
+  const panel=document.getElementById(panelId);
+  const d=sourceDrill[source];
+  if(!d){ panel.innerHTML='<div class="dh">'+source+'<button class="x" onclick="closeSourceDrill(\''+panelId+'\')">✕</button></div><div class="note">No sub-source detail available for this source.</div>'; panel.classList.add('open'); return; }
+  const col = metric==='won'?2:1;
+  const rows=d.rows.filter(r=>r[col]>0).sort((a,b)=>b[col]-a[col]);
+  const max=Math.max(...rows.map(r=>r[col]),1);
+  const body=rows.map(r=>'<tr><td>'+r[0]+'</td><td class="mono" style="text-align:right">'+fmtUSD(r[col])+'</td>'+
+    '<td style="width:130px"><span class="bar" style="width:'+Math.round(r[col]/max*120)+'px"></span></td></tr>').join('') || '<tr><td colspan="3" style="color:var(--gray)">No '+metric+' value for this source.</td></tr>';
+  panel.innerHTML='<div class="dh">'+source+' — '+(metric==='won'?'won revenue':'open pipeline')+' by '+d.by+'<button class="x" onclick="closeSourceDrill(\''+panelId+'\')">✕</button></div>'+
+    '<table><thead><tr><th>'+d.by+'</th><th style="text-align:right">'+(metric==='won'?'Won':'Open')+'</th><th></th></tr></thead><tbody>'+body+'</tbody></table>'+
+    '<div class="note">'+d.note+'</div>';
+  panel.classList.add('open');
+}
+function closeSourceDrill(id){ document.getElementById(id).classList.remove('open'); }
 
 /* ===== TAB WIRING ===== */
 document.getElementById('periodRail').addEventListener('click',e=>{
