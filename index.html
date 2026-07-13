@@ -162,8 +162,8 @@
       <div class="sub" id="periodSub">New-business pipeline (renewals excluded) · HubSpot + Salesforce · Jan 1 – Jul 13</div>
     </div>
     <div class="stamp">
-      <div class="box"><div class="k">Months</div><div class="v">5.5</div></div>
-      <div class="box"><div class="k">Jun</div><div class="v">Partial</div></div>
+      <div class="box"><div class="k">Months</div><div class="v">6.5</div></div>
+      <div class="box"><div class="k">Jul</div><div class="v">Partial</div></div>
     </div>
   </div>
 
@@ -282,7 +282,7 @@
       <h4>Event-Sourced Pipeline &amp; Revenue <span style="font-size:9.5px;font-weight:600;color:var(--red);background:#f0e6e7;padding:2px 7px;border-radius:20px;vertical-align:middle;margin-left:4px">YTD ONLY</span></h4>
       <div class="ch-sub">Events sourced two ways: Import Source Detail (attendee lists) and, for Accelerate, campaign membership</div>
       <div class="chart-wrap tall"><canvas id="eventPipe"></canvas></div>
-      <div class="legend-note"><b>*Accelerate is measured differently.</b> Its attendees were never tagged with an event Import Source Detail — they're tracked as Salesforce <b>campaigns</b> — so Accelerate is shown on a <b>campaign-influence</b> basis (any opp touched by an Accelerate campaign member: 59 opps, $3.11M open, $710K won). That's a broader "touched" measure than the import-detail events beside it, so it isn't directly comparable — it's included because excluding Red Oak's flagship event entirely would understate event impact. The import-detail events (FINRA, SIFMA, NSCP) use single-source attribution. To make Accelerate directly comparable, its attendees would need tagging with <code>Import Source Detail</code>.</div>
+      <div class="legend-note"><b>*Accelerate is measured from campaign membership, scoped to actual attendees.</b> Its "2026 Apr Red Oak Accelerate" campaign has ~8,400 <b>invited</b> (Sent) members but only <b>116 who Attended/Registered</b>; influence is counted only from those attendees (24 opps, $1.38M open, $641K won). Counting the full invite list would have overstated it at $3.1M — an artifact of the invite blast, not event impact. It's still campaign-membership-based (a "touched" measure) rather than the single-source Import Source Detail attribution used for the FINRA/SIFMA/NSCP rows, so treat it as directionally strong, not perfectly comparable.</div>
     </div>
   </section>
 
@@ -388,7 +388,7 @@ const paidDrill={
 
 // Event-sourced (Offline-origin, event import category) pipeline & revenue by named event
 const eventPipe=[ /* event, open, won — import-detail basis unless noted */
-  ['Accelerate (campaign-influence)*',3112466.10,709576.30],
+  ['Accelerate — attendees (campaign)*',1375924.00,640716.30],
   ['2025 FINRA',244388,0],
   ['FINRA 2026 Conference',139007,6000],
   ['2025 SIFMA',73233,0],
