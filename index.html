@@ -207,6 +207,35 @@
     <div class="legend-note">New-business opportunities only — renewals, annual ADV updates, and registration/licensing record types excluded per the renewal-exclusion rule. Pipeline value is opportunity Amount.</div>
   </section>
 
+  <!-- FULL PIPELINE BY SOURCE CATEGORY (Option A) -->
+  <section>
+    <div class="sec-h"><span class="tick"></span><h3>Full Pipeline by Source Category</h3><span class="pill" style="background:#f0e6e7;color:var(--red)">YTD · all record types</span><span class="src">Salesforce record type + influence tags</span></div>
+    <div class="caveat">
+      <span class="ic">!</span>
+      <p><b>This is the whole pipeline, not just marketing's slice.</b> Deals are split by <b>record type</b> — the one dimension that classifies cleanly today (New Logo / Expansion / Professional Services). <b>Marketing-influenced</b> and <b>SDR-influenced</b> are shown as <b>overlapping tags within</b> each bar, not as separate slices — a deal can be both, so they intentionally don't sum to the total. A true mutually-exclusive "who sourced it" split (AE-outbound vs Marketing vs AM vs Partner) is <b>not reliably available yet</b>: opportunity-level source is ~40% populated and marketing-only in its values, and Lead Source is blank on ~90% of deals. <b>Populating a required opportunity source field is the Phase 1 prerequisite</b> for the real sourcing view.</p>
+    </div>
+    <div class="kpis" style="margin-bottom:14px">
+      <div class="kpi"><div class="lab">Total Open Pipeline</div><div class="val">$9.22M</div><div class="note">247 new-biz + services opps</div></div>
+      <div class="kpi"><div class="lab">New Logo</div><div class="val">$4.21M</div><div class="note">46% of open · 121 opps</div></div>
+      <div class="kpi"><div class="lab">Expansion (AM)</div><div class="val">$4.98M</div><div class="note">54% of open · 108 opps</div></div>
+      <div class="kpi muted"><div class="lab">Prof. Services</div><div class="val">$29K</div><div class="note">&lt;1% · 18 opps</div></div>
+    </div>
+    <div class="grid2">
+      <div class="chart-card">
+        <h4>Open Pipeline by Category <span style="font-size:9.5px;font-weight:600;color:var(--gray)">share of total</span></h4>
+        <div class="ch-sub">record type = the clean, mutually-exclusive cut</div>
+        <div class="chart-wrap"><canvas id="fullPipeCat"></canvas></div>
+        <div class="legend-note">Expansion (AM) is the largest open bucket at 54% — worth noting for a marketing org measured on new logo, since more than half of open pipeline sits in AM territory.</div>
+      </div>
+      <div class="chart-card">
+        <h4>Influence Tags by Category <span style="font-size:9.5px;font-weight:600;color:var(--red)">overlapping</span></h4>
+        <div class="ch-sub">$ of each category's open pipeline carrying each tag</div>
+        <div class="chart-wrap"><canvas id="fullPipeInfl"></canvas></div>
+        <div class="legend-note">Tags overlap (a deal can be both marketing- and SDR-influenced), so they exceed the category total by design. SDR-influenced = a sunset-program rep (Quinn, Rustin, Ricky) is named on the deal — the "closing-out legacy" category.</div>
+      </div>
+    </div>
+  </section>
+
   <!-- MQL SOURCE + DEMO TREND -->
   <section>
     <div class="sec-h"><span class="tick"></span><h3>Where Leads Come From</h3><span class="src">Source: HubSpot Original Traffic Source</span></div>
@@ -356,6 +385,17 @@ const mqlDrill={
     ['/request-demo',33],['/contact',5],['homepage',3],['/events/accelerate-2026',2],
     ['/about',2],['/4u-clientwebinar',2],['other pages',7]],note:'All 54 Direct MQLs by entry landing page; /request-demo dominates.'}
 };
+
+// Full pipeline by record-type category (mutually exclusive) + overlapping influence tags [open, won]
+const fullPipeCat=[ /* category, open, won */
+  ['Expansion (AM)',4984131.10,588835.66],
+  ['New Logo',4211485.50,1041562.90],
+  ['Professional Services',28840.00,72750.00]];
+// influence tags: open $ carrying each tag, per category (overlapping)
+const fullPipeInfl={
+  labels:['New Logo','Expansion (AM)','Prof. Services'],
+  mktg:[2416902.50,876525.60,0],
+  sdr:[2712046.50,959456.50,0]};
 
 // Pipeline & won drill-down by source [label, open, won] — YTD, from contact drill-down fields
 const sourceDrill={
@@ -567,6 +607,30 @@ function openMqlDrill(src){
 }
 function closeMqlDrill(){ document.getElementById('mqlDrill').classList.remove('open'); }
 // Offline decomposition — contacts (count) and pipeline ($)
+// Full pipeline by category (share of total) + influence tags
+new Chart(document.getElementById('fullPipeCat'),{
+  type:'bar',
+  data:{labels:fullPipeCat.map(d=>d[0]),
+    datasets:[{data:fullPipeCat.map(d=>d[1]),
+      backgroundColor:[BRAND.blue,BRAND.red,BRAND.gray],borderRadius:3}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{
+      const tot=fullPipeCat.reduce((s,d)=>s+d[1],0);
+      return fmtUSD(c.parsed.x)+' · '+(c.parsed.x/tot*100).toFixed(0)+'% of open';}}}},
+    scales:{x:yMoney,y:noGrid}}
+});
+new Chart(document.getElementById('fullPipeInfl'),{
+  type:'bar',
+  data:{labels:fullPipeInfl.labels,
+    datasets:[
+      {label:'Marketing-influenced',data:fullPipeInfl.mktg,backgroundColor:BRAND.red,borderRadius:3},
+      {label:'SDR-influenced (legacy)',data:fullPipeInfl.sdr,backgroundColor:BRAND.black,borderRadius:3}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmtUSD(c.parsed.x)}}},
+    scales:{x:yMoney,y:noGrid}}
+});
+
+// Offline MQLs / pipeline by import source detail
 new Chart(document.getElementById('offlineContacts'),{
   type:'bar',
   data:{labels:offlineContacts.map(d=>d[0]),
