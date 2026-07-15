@@ -234,6 +234,12 @@
         <div class="legend-note">Tags overlap (a deal can be both marketing- and SDR-influenced), so they exceed the category total by design. SDR-influenced = a sunset-program rep (Quinn, Rustin, Ricky) is named on the deal — the "closing-out legacy" category.</div>
       </div>
     </div>
+    <div class="chart-card" style="margin-top:16px">
+      <h4>Pipeline by Sourced By (Funnel Origin) <span style="font-size:9.5px;font-weight:600;color:var(--gray)">66% direct coverage</span></h4>
+      <div class="ch-sub">Salesforce <b>Sourced By</b> — the closest thing to a true mutually-exclusive sourcing field · open + won</div>
+      <div class="chart-wrap"><canvas id="sourcedByPipe"></canvas></div>
+      <div class="legend-note"><b>Marketing-Inbound dominates</b> — $6.19M open / $1.07M won across 123 opps — with Marketing-Outbound a distant second and small Sales/Referral tails. <b>Sourced By</b> is populated on 66% of opps directly; of the rest, most still carry a marketing traffic source, leaving only <b>15 of 248 opps truly unclassified</b>. This is a better sourcing cut than record type — and the field worth requiring in Phase 1 to reach full coverage.</div>
+    </div>
   </section>
 
   <!-- MQL SOURCE + DEMO TREND -->
@@ -415,6 +421,14 @@ const fullPipeCat=[ /* category, open, won */
   ['New Logo',4211485.50,1041562.90],
   ['Professional Services',28840.00,72750.00]];
 // influence tags: open $ carrying each tag, per category (overlapping)
+// Pipeline by Sourced By (funnel origin) [label, open, won, opps]
+const sourcedByPipe=[
+  ['Marketing - Inbound',6189233.90,1070422.06,123],
+  ['Marketing - Outbound',899561.00,259232.50,31],
+  ['Sales - Outbound',94760.00,35462.00,6],
+  ['Customer Referral',61599.00,4600.00,4],
+  ['(blank / no role)',1912093.70,333432.00,84]];
+
 const fullPipeInfl={
   labels:['New Logo','Expansion (AM)','Prof. Services'],
   mktg:[2416902.50,876525.60,0],
@@ -665,6 +679,17 @@ new Chart(document.getElementById('fullPipeCat'),{
       return fmtUSD(c.parsed.x)+' · '+(c.parsed.x/tot*100).toFixed(0)+'% of open';}}}},
     scales:{x:yMoney,y:noGrid}}
 });
+new Chart(document.getElementById('sourcedByPipe'),{
+  type:'bar',
+  data:{labels:sourcedByPipe.map(d=>d[0]+' ('+d[3]+')'),
+    datasets:[
+      {label:'Open Pipeline',data:sourcedByPipe.map(d=>d[1]),backgroundColor:sourcedByPipe.map(d=>d[0].indexOf('blank')>-1?BRAND.gray:BRAND.red),borderRadius:3},
+      {label:'Won',data:sourcedByPipe.map(d=>d[2]),backgroundColor:sourcedByPipe.map(d=>d[0].indexOf('blank')>-1?'#c9c7c7':BRAND.black),borderRadius:3}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmtUSD(c.parsed.x)+' ('+sourcedByPipe[c.dataIndex][3]+' opps)'}}},
+    scales:{x:yMoney,y:noGrid}}
+});
+
 new Chart(document.getElementById('fullPipeInfl'),{
   type:'bar',
   data:{labels:fullPipeInfl.labels,
