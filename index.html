@@ -315,6 +315,29 @@
     </div>
   </section>
 
+  <!-- WIN RATE BY SOURCE & CAMPAIGN -->
+  <section>
+    <div class="sec-h"><span class="tick"></span><h3>Win Rate by Source &amp; Campaign</h3><span class="pill" style="background:#f0e6e7;color:var(--red)">YTD · closed deals</span><span class="src">won ÷ (won + lost)</span></div>
+    <div class="caveat">
+      <span class="ic">!</span>
+      <p><b>Read these with sample size in mind.</b> Win rate = won ÷ closed (won + lost). Only <b>Offline (65 closed)</b> and <b>Direct (17)</b> have enough closed deals to be statistically meaningful; the rest are <b>directional</b> — a rate built on 2–6 closed deals moves a lot with one deal. Each bar shows its closed-deal count so nothing is over-read. Campaign win rate is a <b>"touched" influence</b> measure (an opp counts for any campaign a member is on), so a deal can appear under several campaigns — it isn't clean single-attribution.</p>
+    </div>
+    <div class="grid2">
+      <div class="chart-card">
+        <h4>Win Rate by Source</h4>
+        <div class="ch-sub">bar = win rate · label shows won / closed</div>
+        <div class="chart-wrap"><canvas id="winBySource"></canvas></div>
+        <div class="legend-note"><b>Organic (67%)</b> and <b>Offline (58%)</b> lead; <b>Paid Search (17%)</b> trails — consistent with the organic-vs-paid finding that paid fills the funnel but converts lower. Paid's rate rests on just 6 closed deals, so treat as directional.</div>
+      </div>
+      <div class="chart-card">
+        <h4>Win Rate by Campaign <span style="font-size:9.5px;font-weight:600;color:var(--gray)">≥4 closed</span></h4>
+        <div class="ch-sub">discrete campaigns with enough closed deals to show</div>
+        <div class="chart-wrap tall"><canvas id="winByCampaign"></canvas></div>
+        <div class="legend-note">Client webinars and Accelerate convert highest (71–83%); the AI webinar series sits ~58–63%. All small samples (4–12 closed) — a "touched" influence read, not clean attribution.</div>
+      </div>
+    </div>
+  </section>
+
   <!-- CAMPAIGN INFLUENCE -->
   <section>
     <div class="sec-h"><span class="tick"></span><h3>Campaign Influence on Pipeline</h3><span class="pill">top 12</span><span class="src">Salesforce campaign members → opp contact roles</span></div>
@@ -448,6 +471,29 @@ const offlinePipe=[ /* detail, open, won */
   ['2026-Q3 4U IC Admins',92002.50,93380],
   ['IAPD Websites Over 50 (ABM)',77920,63772.50],
   ['2025 SIFMA',73233,0]];
+
+// Win rate by source [source, win_rate_pct, won, closed]
+const winSource=[
+  ['Organic Search',67,6,9],
+  ['Offline Sources',58,38,65],
+  ['Email Marketing',50,1,2],
+  ['Direct Traffic',35,6,17],
+  ['Paid Search',17,1,6],
+  ['Referrals',0,0,1]];
+// Win rate by campaign [campaign, win_rate_pct, won, closed] — discrete, >=4 closed
+const winCampaign=[
+  ['NSCP 2025 Conference',100,4,4],
+  ['2025 Q4 Client Webinar',83,5,6],
+  ['2026 Q1 Client Webinar',80,4,5],
+  ['Eversheds Sutherland Webinar (Mar)',75,3,4],
+  ['Red Oak Connect Live (Q4)',75,3,4],
+  ['2026 Apr Red Oak Accelerate',71,5,7],
+  ['AI in Financial Services (Q3)',67,4,6],
+  ['2026 Feb AI Growth Webinar',63,5,8],
+  ['2026 AI Compliance Webinar',63,5,8],
+  ['FINRA 2026 Conference',60,3,5],
+  ['AI in Compliance Webinar',58,7,12],
+  ['Red Oak Connect Live (Q2)',40,2,5]];
 
 const campInfl=[
   ['AI in Compliance Webinar','Webinar',3948647.80,695754],
@@ -685,6 +731,25 @@ new Chart(document.getElementById('eventPipe'),{
   options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
     plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmtUSD(c.parsed.x)}}},
     scales:{x:yMoney,y:noGrid}}
+});
+
+// Win rate charts — bar = win %, tooltip/label shows won/closed
+new Chart(document.getElementById('winBySource'),{
+  type:'bar',
+  data:{labels:winSource.map(d=>d[0]+' ('+d[2]+'/'+d[3]+')'),
+    datasets:[{data:winSource.map(d=>d[1]),
+      backgroundColor:winSource.map(d=>d[3]>=15?BRAND.red:BRAND.redSoft),borderRadius:3}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const d=winSource[c.dataIndex];return d[1]+'% win · '+d[2]+' won of '+d[3]+' closed'+(d[3]<10?' (small sample)':'');}}}},
+    scales:{x:{grid:{color:'#f0efef'},ticks:{color:BRAND.gray,callback:v=>v+'%'},min:0,max:100},y:noGrid}}
+});
+new Chart(document.getElementById('winByCampaign'),{
+  type:'bar',
+  data:{labels:winCampaign.map(d=>d[0]+' ('+d[2]+'/'+d[3]+')'),
+    datasets:[{data:winCampaign.map(d=>d[1]),backgroundColor:BRAND.red,borderRadius:3}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const d=winCampaign[c.dataIndex];return d[1]+'% win · '+d[2]+' won of '+d[3]+' closed';}}}},
+    scales:{x:{grid:{color:'#f0efef'},ticks:{color:BRAND.gray,callback:v=>v+'%'},min:0,max:100},y:noGrid}}
 });
 
 new Chart(document.getElementById('campInfl'),{
