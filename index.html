@@ -142,7 +142,7 @@
     <div class="logo">R</div>
     <h1>Marketing Attribution <span>· GTM Performance</span></h1>
   </div>
-  <div class="asof">Live snapshot · <b>YTD 2026</b> · as of <b>Jul 13, 2026</b></div>
+  <div class="asof">Live snapshot · <b>YTD 2026</b> · as of <b>Jul 21, 2026</b></div>
 </header>
 
 <nav class="rail" id="periodRail">
@@ -159,22 +159,22 @@
   <div class="pagehead">
     <div>
       <h2 id="periodTitle">Year-to-Date 2026</h2>
-      <div class="sub" id="periodSub">New-business pipeline (renewals excluded) · HubSpot + Salesforce · Jan 1 – Jul 13</div>
+      <div class="sub" id="periodSub">New-business pipeline (renewals excluded) · HubSpot + Salesforce · Jan 1 – Jul 21</div>
     </div>
     <div class="stamp">
-      <div class="box"><div class="k">Months</div><div class="v">6.5</div></div>
+      <div class="box"><div class="k">Months</div><div class="v">6.7</div></div>
       <div class="box"><div class="k">Jul</div><div class="v">Partial</div></div>
     </div>
   </div>
 
   <!-- KPI TILES -->
   <div class="kpis">
-    <div class="kpi"><div class="lab">MQLs</div><div class="val" id="kMql">178</div><div class="note" id="kMqlN">MQL_Date stamp, YTD</div></div>
-    <div class="kpi"><div class="lab">Demo Requests</div><div class="val" id="kDemo">142</div><div class="note">first-touch demo conversions</div></div>
-    <div class="kpi"><div class="lab">Open Pipeline</div><div class="val" id="kOpen">$9.19M</div><div class="note" id="kOpenN">137 new-biz opps open</div></div>
-    <div class="kpi"><div class="lab">Closed-Won</div><div class="val" id="kWon">$1.65M</div><div class="note" id="kWonN">58 deals won</div></div>
-    <div class="kpi"><div class="lab">Avg Won Deal</div><div class="val" id="kAvg">$28.4K</div><div class="note">new-business mean</div></div>
-    <div class="kpi muted"><div class="lab">Win Rate</div><div class="val" id="kWin">53.2%</div><div class="note">of closed new-biz opps</div></div>
+    <div class="kpi"><div class="lab">MQLs</div><div class="val" id="kMql">185</div><div class="note" id="kMqlN">MQL_Date stamp, YTD</div></div>
+    <div class="kpi"><div class="lab">Demo Requests</div><div class="val" id="kDemo">154</div><div class="note">first-touch demo conversions</div></div>
+    <div class="kpi"><div class="lab">Open Pipeline</div><div class="val" id="kOpen">$8.27M</div><div class="note" id="kOpenN">134 new-biz opps open</div></div>
+    <div class="kpi"><div class="lab">Closed-Won</div><div class="val" id="kWon">$1.75M</div><div class="note" id="kWonN">62 deals won</div></div>
+    <div class="kpi"><div class="lab">Avg Won Deal</div><div class="val" id="kAvg">$28.3K</div><div class="note">new-business mean</div></div>
+    <div class="kpi muted"><div class="lab">Win Rate</div><div class="val" id="kWin">50.8%</div><div class="note">of closed new-biz opps</div></div>
   </div>
 
   <!-- MARKETING LEADS TABLE -->
@@ -189,7 +189,7 @@
         <tbody></tbody>
       </table>
     </div>
-    <div class="legend-note">* July is a partial month (through Jul 13). MQLs are counted on <b>MQL_Date</b> (Red Oak's qualification stamp tied to Lifecycle Stage Primary), which records the event regardless of the contact's current stage.</div>
+    <div class="legend-note">* July is a partial month (through Jul 21). MQLs are counted on <b>MQL_Date</b> (Red Oak's qualification stamp tied to Lifecycle Stage Primary), which records the event regardless of the contact's current stage.</div>
   </section>
 
   <!-- REVENUE / PIPELINE TABLE -->
@@ -248,7 +248,7 @@
     <div class="grid2">
       <div class="chart-card">
         <h4>MQLs by Original Traffic Source <span style="font-size:9.5px;font-weight:600;color:var(--red);background:#f0e6e7;padding:2px 7px;border-radius:20px;vertical-align:middle;margin-left:4px">YTD ONLY</span></h4>
-        <div class="ch-sub">178 MQLs YTD (MQL_Date stamp) · <span style="color:var(--red);font-weight:600">click a bar to drill down →</span></div>
+        <div class="ch-sub">185 MQLs YTD (MQL_Date stamp) · <span style="color:var(--red);font-weight:600">click a bar to drill down →</span></div>
         <div class="chart-wrap"><canvas id="mqlSource"></canvas></div>
         <div id="mqlDrill" class="drill"></div>
         <div class="legend-note">Counted on <b>MQL_Date</b> (Red Oak's qualification stamp tied to the custom Lifecycle Stage Primary), not HubSpot standard-stage entries — which over-counted ~3x by including re-imports and bulk Offline loads that never truly qualified. Under the real definition, <b>Paid Search (54) is the #1 MQL source</b>, ahead of Direct (49) and Offline (48).</div>
@@ -358,8 +358,31 @@
     </div>
   </section>
 
+  <!-- LAST TOUCH BEFORE MQL -->
+  <section>
+    <div class="sec-h"><span class="tick"></span><h3>Last Campaign Touch Before MQL</h3><span class="pill" style="background:#f0e6e7;color:var(--red)">last-touch · 26% coverage</span><span class="src">most recent campaign engagement before MQL_Date</span></div>
+    <div class="caveat">
+      <span class="ic">!</span>
+      <p><b>A different attribution model from the panel above — read the denominator first.</b> This is <b>last-touch</b>: for each MQL, the campaign they most recently engaged with <b>before</b> their MQL date. Only <b>45 of 171 MQLs (26%)</b> had any campaign touch first; the other 126 qualified through direct, paid, or organic paths with no campaign engagement. So this answers <b>"among campaign-influenced MQLs, which campaign was last"</b> — not "what creates MQLs." Only the final campaign is credited (a contact who hit several is counted once). Lag figures sit on small counts, so treat long lags as illustrative.</p>
+    </div>
+    <div class="grid2">
+      <div class="chart-card">
+        <h4>Last Touch by Campaign</h4>
+        <div class="ch-sub">45 campaign-influenced MQLs · label shows avg days to MQL</div>
+        <div class="chart-wrap tall"><canvas id="lastTouchCamp"></canvas></div>
+        <div class="legend-note">The <b>2026 Feb AI Growth Webinar</b> is the biggest single driver (9), then AI in Financial Services and the 4U Client List (7 each). Webinars dominate — the mid-funnel moment where intent tips into qualification.</div>
+      </div>
+      <div class="chart-card">
+        <h4>How Long From Touch to MQL?</h4>
+        <div class="ch-sub">same-day = the engagement was the qualifying act</div>
+        <div class="chart-wrap tall"><canvas id="lastTouchLag"></canvas></div>
+        <div class="legend-note"><b>28 of 45 qualified same-day</b> — registration/attendance was itself the trigger. The lagged tail (esp. conferences like <b>NSCP, 236–250 days</b>) is the "engaged, went quiet, converted months later" story.</div>
+      </div>
+    </div>
+  </section>
+
   <footer>
-    <b>Red Oak Compliance</b> · Marketing Attribution Dashboard · point-in-time snapshot, Jul 13 2026<br>
+    <b>Red Oak Compliance</b> · Marketing Attribution Dashboard · point-in-time snapshot, Jul 21 2026<br>
     Data: HubSpot (MQLs, sources, demos) + Salesforce via Snowflake BRONZE.SALESFORCE (pipeline, revenue, campaign influence). Regenerate to refresh. © 2026 Red Oak Compliance
   </footer>
 </main>
@@ -375,31 +398,31 @@ const months=['Jan','Feb','Mar','Apr','May','Jun','Jul*'];
 const monthFull=['January','February','March','April','May','June','July (partial)'];
 
 // HubSpot — MQLs by lifecycle-entry date; demos by first-conversion date
-const mqlByMonth =[37,45,27,14,16,20,19];
-const demoByMonth=[35,33,18,13,13,16,14];
+const mqlByMonth =[37,40,25,14,16,20,33];
+const demoByMonth=[35,33,18,13,13,16,26];
 
 // Salesforce (via Snowflake) — new-business opps only (renewals excluded)
-const oppsCreated=[37,41,36,33,49,35,15];
-const wonCount   =[11,9,6,10,14,8,0];
-const wonAmt     =[952535.61,115827,62032,253723.75,152557.70,111472.50,0];
-const openCount  =[9,18,20,16,33,26,15];
-const openAmt    =[292800.50,1719108,2137030,1614552.20,2581404.30,718998.60,121849];
+const oppsCreated=[37,41,36,33,49,35,25];
+const wonCount   =[11,9,6,10,14,9,3];
+const wonAmt     =[952535.61,115827,62032,253723.75,152557.70,166472.50,50260];
+const openCount  =[8,17,19,14,31,24,21];
+const openAmt    =[288200.50,1714508,2094744,764385.00,2341455.80,563839.60,500139];
 
 // Revenue/pipeline by source, per month [won, open]; keyed by source
 const SOURCES=['Offline Sources','Email Marketing','Paid Search','Organic Search','Direct Traffic','Referrals','no source / no role'];
 const sourceByMonth={ // index 0..6 = Jan..Jul; [won, open]; contact-level source, non-Offline preferred
- 'Offline Sources':   [[828775.61,286012.50],[82827,1005734],[60782,1797261.20],[112305,283089],[123497.70,1336047.80],[74472.50,571122],[0,121849]],
- 'Email Marketing':   [[0,0],[0,83399],[0,0],[0,882450],[0,0],[2500,0],[0,0]],
- 'Paid Search':       [[88600,0],[0,426300],[0,113758.80],[0,0],[0,453600],[0,0],[0,0]],
- 'Organic Search':    [[10000,0],[13000,0],[0,109474],[59653.75,0],[14800,379291.50],[9660,1057.60],[0,0]],
- 'Direct Traffic':    [[0,6788],[20000,203675],[1250,116536],[58305,449013.20],[0,85121],[15180,25250],[0,0]],
+ 'Offline Sources':   [[828775.61,281412.50],[82827,1001134],[60782,1797261.20],[112305,315371.80],[123497.70,1592461.80],[129472.50,496762],[29100,462889]],
+ 'Email Marketing':   [[0,0],[0,83399],[0,0],[0,0],[0,0],[2500,0],[0,0]],
+ 'Paid Search':       [[88600,0],[0,426300],[0,113758.80],[0,0],[0,381600],[0,0],[0,37250]],
+ 'Organic Search':    [[10000,0],[13000,0],[0,109474],[59653.75,0],[14800,282273],[9660,1057.60],[0,0]],
+ 'Direct Traffic':    [[0,6788],[20000,203675],[1250,74250],[58305,449013.20],[0,85121],[15180,25250],[0,0]],
  'Referrals':         [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]],
- 'no source / no role':[[25160,0],[0,0],[0,0],[23460,0],[14260,327344],[9660,121569],[0,0]]
+ 'no source / no role':[[25160,0],[0,0],[0,0],[23460,0],[14260,0],[9660,40770],[21160,0]]
 };
 
 // YTD-only panels (do not split reliably by month)
-const mqlSource=[['Direct Traffic',54],['Offline Sources',54],['Paid Search',41],
-  ['Organic Search',15],['Referrals',6],['Email Marketing',4],['Unknown',4]];
+const mqlSource=[['Direct Traffic',61],['Offline Sources',49],['Paid Search',43],
+  ['Organic Search',18],['Referrals',6],['Email Marketing',4],['Unknown',4]];
 // MQL source drill-downs (YTD, MQL_Date basis) — counts are MQLs, not all contacts
 const mqlDrill={
  'Paid Search':{by:'Google Ads campaign',rows:[
@@ -509,6 +532,27 @@ const winCampaign=[
   ['AI in Compliance Webinar',58,7,12],
   ['Red Oak Connect Live (Q2)',40,2,5]];
 
+// Last campaign touch before MQL (45 of 171 MQLs had a campaign touch first)
+const lastTouchCamp=[
+  ['2026 Feb AI Growth Webinar',9,5],
+  ['4U Client List',7,16],
+  ['2026-Q3 AI in Financial Services',7,0],
+  ['2026 Apr Red Oak Accelerate',4,0],
+  ['AI in Compliance Webinar',3,0],
+  ['NSCP 2025 Conference',2,243],
+  ['2026 AI Compliance Webinar',2,88],
+  ['2026-Q2 4U Quarterly Update',2,0],
+  ['2025 Q4 Client Webinar',1,127],
+  ['2026-Q4 Red Oak Connect Live',1,67],
+  ['FINRA 2025 Conference',1,50],
+  ['Operation Christmas Lifecycle',1,43],
+  ['2026 Q1 MirrorWeb Webinar',1,28],
+  ['2026 Q1 Client Webinar',1,3],
+  ['2026-Q2 FINRA Social Hour',1,2],
+  ['IAA 2026 Conference',1,1],
+  ['2026 MMI Conference',1,0]];
+const lastTouchLag=[['Same day',28],['1\u20137 d',6],['8\u201330 d',1],['31\u201390 d',5],['90+ d',5]];
+
 const campInfl=[
   ['AI in Compliance Webinar','Webinar',3948647.80,695754],
   ['SMC Article','Gated Asset',3473434.60,267844],
@@ -536,12 +580,12 @@ const sum=a=>a.reduce((x,y)=>x+y,0);
 const pick=(arr,idx)=>idx.map(i=>arr[i]);
 
 function periodLabel(p){
-  if(p==='YTD') return ['Year-to-Date 2026','New-business pipeline (renewals excluded) · HubSpot + Salesforce · Jan 1 – Jul 13'];
+  if(p==='YTD') return ['Year-to-Date 2026','New-business pipeline (renewals excluded) · HubSpot + Salesforce · Jan 1 – Jul 21'];
   if(p==='Q1')  return ['Q1 2026','Jan–Mar · new-business pipeline (renewals excluded)'];
   if(p==='Q2')  return ['Q2 2026','Apr–Jun · new-business pipeline (renewals excluded)'];
-  if(p==='Q3')  return ['Q3 2026','Jul partial through the 13th · new-business pipeline (renewals excluded)'];
+  if(p==='Q3')  return ['Q3 2026','Jul partial through the 21st · new-business pipeline (renewals excluded)'];
   const i=parseInt(p,10);
-  return [monthFull[i]+' 2026', (i===6?'Partial month, through Jul 13 · ':'')+'new-business pipeline (renewals excluded)'];
+  return [monthFull[i]+' 2026', (i===6?'Partial month, through Jul 21 · ':'')+'new-business pipeline (renewals excluded)'];
 }
 
 /* ===== RENDERERS ===== */
@@ -775,6 +819,26 @@ new Chart(document.getElementById('winByCampaign'),{
   options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
     plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const d=winCampaign[c.dataIndex];return d[1]+'% win · '+d[2]+' won of '+d[3]+' closed';}}}},
     scales:{x:{grid:{color:'#f0efef'},ticks:{color:BRAND.gray,callback:v=>v+'%'},min:0,max:100},y:noGrid}}
+});
+
+// Last-touch-before-MQL charts
+new Chart(document.getElementById('lastTouchCamp'),{
+  type:'bar',
+  data:{labels:lastTouchCamp.map(d=>d[0]+(d[2]===0?' (same-day)':' (~'+d[2]+'d)')),
+    datasets:[{data:lastTouchCamp.map(d=>d[1]),
+      backgroundColor:lastTouchCamp.map(d=>d[2]>30?BRAND.black:BRAND.red),borderRadius:3}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const d=lastTouchCamp[c.dataIndex];return d[1]+' MQLs · '+(d[2]===0?'same day':'avg '+d[2]+' days to MQL');}}}},
+    scales:{x:{grid:{color:'#f0efef'},ticks:{color:BRAND.gray,precision:0}},y:{grid:{display:false},ticks:{color:BRAND.gray,font:{size:9.5}}}}}
+});
+new Chart(document.getElementById('lastTouchLag'),{
+  type:'bar',
+  data:{labels:lastTouchLag.map(d=>d[0]),
+    datasets:[{data:lastTouchLag.map(d=>d[1]),
+      backgroundColor:lastTouchLag.map((d,i)=>i===0?BRAND.black:BRAND.red),borderRadius:3}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+' MQLs'}}},
+    scales:{x:{grid:{display:false},ticks:{color:BRAND.gray}},y:{grid:{color:'#f0efef'},ticks:{color:BRAND.gray,precision:0}}}}
 });
 
 new Chart(document.getElementById('campInfl'),{
